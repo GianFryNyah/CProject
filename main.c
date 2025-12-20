@@ -1,13 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void
-clear(void)
+void clear(void)
 {
     while ( getchar() != '\n' );
 }
 
+void menu();
+
 int main(){
+    menu();
+    return 0;
+}
+
+void menu(){
     int choice = 0;
     printf("\nMenu Principale:\n");
     printf("\n  1. Nuova Partita\n  2. Carica Salvataggio\n");
@@ -20,12 +26,10 @@ int main(){
         int success;
         char konamicode[] = "wwssadadba ";
         int len = sizeof(konamicode) / sizeof(konamicode[0]);
-
-        if(!fgets(buff, 2, stdin)){
-                return 1;
-        }
+        fgets(buff, 2, stdin);
         char *endptr;
         choice = strtol(buff, &endptr, 10);
+        printf("\n%d\n", choice); //TESTING PURPOSE
 
         switch (choice){
             case 1:
@@ -40,7 +44,7 @@ int main(){
             case 3:
                 //trucchi
                 //accessibile con Konami's code
-                break;
+                exit(1);
             default:
                 k = buff[0];
                 printf("\n%c\n", k); //TESTING PURPOSE
