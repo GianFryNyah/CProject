@@ -43,7 +43,7 @@ int main(){
                 break;
             default:
                 k = buff[0];
-                printf("\n%c\n", k);
+                printf("\n%c\n", k); //TESTING PURPOSE
                 break;
         }
         clear();
