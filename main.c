@@ -1,6 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void
+clear(void)
+{
+    while ( getchar() != '\n' );
+}
+
 int main(){
     int choice = 0;
     printf("\nMenu Principale:\n");
@@ -9,31 +15,17 @@ int main(){
     do{
         printf("Seleziona una delle opzioni del menu [1-2]: ");
 
+        char k;
         char buff[2];
         int success;
         char konamicode[] = "wwssadadba ";
         int len = sizeof(konamicode) / sizeof(konamicode[0]);
-        
 
-        /*do// INPUT HANDLER (strtol())
-        {
-            if(!fgets(buff, 2, stdin)){
+        if(!fgets(buff, 2, stdin)){
                 return 1;
-            }
-            char *endptr;
-            choice = strtol(buff, &endptr, 10);
-            if(endptr == buff){
-                success = 0;
-            }
-            else if(*endptr && *endptr != '\n'){
-                success = 0;
-            }
-            else{
-                success = 1;
-            }
-        } while (!success);*/
-
-        scanf("%d", &choice);
+        }
+        char *endptr;
+        choice = strtol(buff, &endptr, 10);
 
         switch (choice){
             case 1:
@@ -50,7 +42,10 @@ int main(){
                 //accessibile con Konami's code
                 break;
             default:
+                k = buff[0];
+                printf("\n%c\n", k);
                 break;
         }
-    }while(choice != 0);
+        clear();
+    }while(choice != 3);
 }
