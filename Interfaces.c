@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "TimeStamp.c"
 #include "DiceThrow.c"
+#include "FileManipulator.c"
 
 void clear(void)
 {
@@ -29,8 +29,8 @@ void menu(){
         printf("\n%d\n", choice);
 
         //DEBUGGING FOR SAVE SYSTEM WITH TIME STAMP
-        char SaveStats[] = "this will contains details of each save\n";
-        TimeStamp(SaveStats);
+        char* SaveStats = ", -- P . VITA , -- MONETE , -- OGGETTI , - MISSIONI COMPLETATE\n";
+        addSave(SaveStats);
 
         //DEBUGGING FOR DICE THROW
         int result = DiceThrow();
