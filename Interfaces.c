@@ -26,15 +26,19 @@ void menu(){
         choice = strtol(buff, &endptr, 10);
 
         //MENU CHOICE TESTING PURPOSE
-        printf("\n%d\n", choice);
+        //printf("\n%d\n", choice);
 
         //DEBUGGING FOR SAVE SYSTEM WITH TIME STAMP
         char* SaveStats = ", -- P . VITA , -- MONETE , -- OGGETTI , - MISSIONI COMPLETATE\n";
         addSave(SaveStats);
 
+        //DEBUGGING FOR DELETING SAVES
+        int Num = 7;
+        deleteSave(Num);
+
         //DEBUGGING FOR DICE THROW
-        int result = DiceThrow();
-        printf("Dice trown's result is: %d\n", result);
+        //int result = DiceThrow();
+        //printf("Dice trown's result is: %d\n", result);
 
         switch (choice){
             case 1:
@@ -51,8 +55,7 @@ void menu(){
                 //accessibile con Konami's code
                 exit(1);
             default:
-                k = buff[0];
-                printf("\n%c\n", k); //TESTING PURPOSE
+                //TESTING PURPOSE
                 break;
         }
         clear();

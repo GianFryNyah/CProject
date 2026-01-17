@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #define BUFF 4096
 
-int count_lines();
+int count_lines(); //Used by addSave(char* string)
 
 void addSave(char* SaveStats){
     //TIMESTAMP FOR NEW SAVE
@@ -20,10 +21,53 @@ void addSave(char* SaveStats){
     int nlines = count_lines();
     fprintf(pFile, "%d. %s%s", nlines, formatted_date, SaveStats);
     fclose(pFile);
-    printf("%s%sThere's %d saves on the file\n", formatted_date, SaveStats, nlines);
+    //printf("%s%sThere's %d saves on the file\n", formatted_date, SaveStats, nlines); //debug
 }
 
-void deleteSave(){}
+void deleteSave(int Num){
+    //IT DELETS ONE SPECIFIED SAVE BY PASSING IS INDEX NUMBER
+    //IT THEN RE-SORT SAVE FILE INDEXING
+    FILE *cpFile = fopen("savefile_copy.txt", "w");
+    FILE *ppFile = fopen("savefile.txt", "r");
+    char data[BUFF];
+    while(fgets(data, BUFF, ppFile) != NULL){
+        char *endptr;
+        int Index = strtol(data, &endptr, 10);
+        if(Index < Num){
+            fprintf(cpFile, "%s", data);
+        }
+        else if(Num == Index){
+            continue;
+        }
+        else if(Index > Num){
+            int CIndex = Index;
+            CIndex -= 1;
+            if(CIndex <= 9){
+                char SIndex[2];
+                sprintf(SIndex, "%d", CIndex);
+                data[0] = SIndex[0];
+                if(Index == 10){
+                    int lenght = strlen(data);
+                    for (int i = 1; i < lenght; i++){
+                        data[i] = data[i+1];
+                    }
+                }
+                fprintf(cpFile, "%s", data);
+            }
+            else if(CIndex >= 10){
+                char SIndex[4];
+                sprintf(SIndex, "%d", CIndex);
+                for(int i = 0; i < 2; i++){
+                    data[i] = SIndex[i];
+                }
+                fprintf(cpFile, "%s", data);
+            }
+        }
+    }
+    fclose(ppFile);
+    //Insert here re-indexing
+    fclose(cpFile);
+}
 
 void loadSave(){}
 
@@ -56,5 +100,6 @@ int count_lines(){ //DA STUDIARE MEGLIO
         }
     }
     fclose(pFile);
+    count += 1;
     return count;
 }
