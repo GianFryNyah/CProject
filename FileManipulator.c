@@ -6,6 +6,20 @@
 
 int count_lines(); //Used by addSave(char* string); It return the number of lines (counting \n) of a text file
 
+void ShowSaves(){
+    FILE *pFile = fopen("savefile.txt", "r");
+    
+    char data[BUFF];
+    if(pFile == NULL){
+        printf("Error opening file!");
+    }
+
+    while(fgets(data, BUFF, pFile) != NULL){
+        printf("\t%s", data);
+    }
+    fclose(pFile);
+    printf("\n");
+}
 void addSave(char* SaveStats){//It appends a save stat, given a string type with player stats (this function do the indexing job)
     //TIMESTAMP FOR NEW SAVE
     time_t rawtime;
