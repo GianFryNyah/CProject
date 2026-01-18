@@ -4,9 +4,9 @@
 #include <time.h>
 #define BUFF 4096
 
-int count_lines(); //Used by addSave(char* string)
+int count_lines(); //Used by addSave(char* string); It return the number of lines (counting \n) of a text file
 
-void addSave(char* SaveStats){
+void addSave(char* SaveStats){//It appends a save stat, given a string type with player stats (this function do the indexing job)
     //TIMESTAMP FOR NEW SAVE
     time_t rawtime;
     struct tm * timeinfo;
@@ -18,17 +18,27 @@ void addSave(char* SaveStats){
 
     //OPENING TEXT FILE FOR ADDING A SAVE
     FILE *pFile = fopen("savefile.txt", "a");
+    if (pFile == NULL){
+        perror("Error opening file!");
+    }
     int nlines = count_lines();
     fprintf(pFile, "%d. %s%s", nlines, formatted_date, SaveStats);
     fclose(pFile);
     //printf("%s%sThere's %d saves on the file\n", formatted_date, SaveStats, nlines); //debug
 }
 
-void deleteSave(int Num){
+void deleteSave(int Num){//Remove a certain save stat given his index, passed as an int type
     //IT DELETS ONE SPECIFIED SAVE BY PASSING IS INDEX NUMBER
     //IT THEN RE-SORT SAVE FILE INDEXING
     FILE *cpFile = fopen("savefile_copy.txt", "w");
+    if (cpFile == NULL){
+        perror("Error opening file!");
+    }
     FILE *ppFile = fopen("savefile.txt", "r");
+    if (ppFile == NULL){
+        perror("Error opening file!");
+    }
+
     char data[BUFF];
     while(fgets(data, BUFF, ppFile) != NULL){
         char *endptr;
@@ -67,11 +77,28 @@ void deleteSave(int Num){
     fclose(ppFile);
     //Insert here re-indexing
     fclose(cpFile);
+    FILE *_ppFile = fopen("savefile.txt", "w");
+    if (_ppFile == NULL){
+        perror("Error opening file!");
+    }
+    FILE *_cpFile = fopen("savefile_copy.txt", "r");
+    if (_cpFile == NULL){
+        perror("Error opening file!");
+    }
+    
+    while(fgets(data, BUFF, _cpFile) != NULL){
+        fprintf(_ppFile, "%s", data);
+    }
+
+    fclose(_ppFile);
+    fclose(_cpFile);
+    remove("savefile_copy.txt");
 }
 
 void loadSave(){}
 
-int count_lines(){ //DA STUDIARE MEGLIO
+int count_lines(){
+    //DA STUDIARE MEGLIO
     FILE* pFile;
     pFile = fopen("savefile.txt", "rb");
     if (pFile == NULL){

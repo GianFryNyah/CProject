@@ -8,6 +8,14 @@ void clear(void)
     while ( getchar() != '\n' );
 }
 
+int InputHandlerInt(char buff[]){
+    char *endptr;
+    if (!fgets(buff, 64, stdin)){
+        return 1;
+    }
+    return strtol(buff, &endptr, 10);
+}
+
 void menu(){
     int choice = 0;
     printf("\nMenu Principale:\n");
@@ -15,9 +23,8 @@ void menu(){
 
     do{
         printf("Seleziona una delle opzioni del menu [1-2]: ");
-
-        char k;
         char buff[2];
+        //choice = InputHandlerInt(buff);
         int success;
         char konamicode[] = "wwssadadba ";
         int len = sizeof(konamicode) / sizeof(konamicode[0]);
