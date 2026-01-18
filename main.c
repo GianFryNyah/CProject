@@ -3,6 +3,7 @@
 #include "Interfaces.c"
 
 int main(){
-    menu();
+    int CheatMode = 1;
+    menu(CheatMode);
     return 0;
 }

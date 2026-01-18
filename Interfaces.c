@@ -4,31 +4,29 @@
 #include <stdbool.h>
 #include "DiceThrow.c"
 #include "FileManipulator.c"
+#include "InterfaceMethod.c"
 
-void game();
+void game(int CheatMode);
+
+typedef struct{
+    int life;
+    int money;
+    int items;
+    int CompletedMissions;
+}player;
 
 void clear(void)
 {
     while ( getchar() != '\n' );
 }
 
-int InputHandlerInt(int buf_size){
-    char *endptr;
-    char buff[buf_size];
-    fgets(buff, sizeof(buff), stdin);
-    return strtol(buff, &endptr, 10);
-}
-
-void menu(){
+void menu(int CheatMode){
     int choice = 0;
-    printf("\nMenu Principale:\n");
-    printf("\n  1. Nuova Partita\n  2. Carica Salvataggio\n");
-
+    Text(CheatMode);
     do{
-        printf("Seleziona una delle opzioni del menu [1-2]: ");
+        Text(CheatMode + 2);
         int buf_size = 2;
         choice = InputHandlerInt(buf_size);
-        int success;
         char konamicode[] = "wwssadadba ";
         /*int len = sizeof(konamicode) / sizeof(konamicode[0]);
         fgets(buff, 2, stdin);
@@ -56,7 +54,7 @@ void menu(){
                 //Iniziera' una nuova partita dove all’avvio verra' creato l’eroe della storia, che iniziera' con
                 //20 punti vita, 0 monete, 0 oggetti, 0 missioni completate.
                 //Vedi la Sezione 3 per lo svolgimento e le regole del gioco.
-                game();
+                game(CheatMode);
                 break;
             case 2:
                 //mostra i salvataggi da poter caricare
@@ -79,7 +77,7 @@ void menu(){
                     case 1:
                         //load save stats
                         printf("\nLoading...");
-                        menu();
+                        menu(CheatMode);
                         //here ask for additional enter, to fix ( maybe ?)
                         break;
                     case 2:
@@ -92,29 +90,36 @@ void menu(){
                         if(Confirmation == 1){
                             deleteSave(SaveIndex);
                             printf("\nYou've successfully deleted the selected save!\n");
-                            menu();
+                            menu(CheatMode);
                         }
                         //here ask for additional enter, to fix ( maybe ?)
-                        menu();
+                        menu(CheatMode);
                 }
                 break;
             case 3:
                 //trucchi
                 //accessibile con Konami's code
-                exit(1);
+                if (CheatMode == 1){
+                    CheatMode = 2;
+                    clear();
+                    menu(CheatMode);
+                }
+                //Use cheats
+                printf("You're welcome, dirty cheater!\n");
+                //Use cheats
+                
+                clear();
+                menu(CheatMode);
             default:
                 //TESTING PURPOSE
                 break;
         }
         clear();
-    }while(choice != 3);
+    }while(true);
 }
 
-void game(){
-    int life = 20;
-    int money = 0;
-    int items = 0;
-    int CompletedMissions = 0;
+void game(int CheatMode){
+    player player01 = {20, 0, 0, 0};
 
     bool PaludePutrescenteIsCompleted = false;
     bool MagioneInfestataIsCompleted = false;
@@ -125,4 +130,5 @@ void game(){
     int test;
     test = InputHandlerInt(buf);
     printf("\n%d is a number;\nPress Enter to escape from this place!!! ");
+    menu(CheatMode);
 }
