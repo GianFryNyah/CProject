@@ -6,14 +6,14 @@
 #include "FileManipulator.c"
 #include "InterfaceMethod.c"
 
-void game(int CheatMode);
-
 typedef struct{
     int life;
     int money;
     int items;
     int CompletedMissions;
 }player;
+
+void game(int CheatMode, player player01);
 
 void clear(void)
 {
@@ -54,7 +54,8 @@ void menu(int CheatMode){
                 //Iniziera' una nuova partita dove all’avvio verra' creato l’eroe della storia, che iniziera' con
                 //20 punti vita, 0 monete, 0 oggetti, 0 missioni completate.
                 //Vedi la Sezione 3 per lo svolgimento e le regole del gioco.
-                game(CheatMode);
+                player NewPlayer = {20, 0, 0, 0};
+                game(CheatMode, NewPlayer);
                 break;
             case 2:
                 //mostra i salvataggi da poter caricare
@@ -118,8 +119,7 @@ void menu(int CheatMode){
     }while(true);
 }
 
-void game(int CheatMode){
-    player player01 = {20, 0, 0, 0};
+void game(int CheatMode, player player01){
 
     bool PaludePutrescenteIsCompleted = false;
     bool MagioneInfestataIsCompleted = false;
