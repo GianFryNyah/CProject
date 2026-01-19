@@ -100,17 +100,19 @@ void menu(int CheatMode){
             case 3:
                 //trucchi
                 //accessibile con Konami's code
-                if (CheatMode == 1){
+                if (CheatMode == 1){//questa condizione va spostata fuori a konami code implementata
                     CheatMode = 2;
                     clear();
                     menu(CheatMode);
                 }
                 //Use cheats
-                printf("You're welcome, dirty cheater!\n");
-                //Use cheats
-                
-                clear();
-                menu(CheatMode);
+                if (CheatMode == 2){
+                    printf("You're welcome, dirty cheater!\n");
+                    clear();
+                    menu(CheatMode);
+                }
+                break;
+
             default:
                 //TESTING PURPOSE
                 break;
