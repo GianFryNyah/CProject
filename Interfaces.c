@@ -22,12 +22,38 @@ void clear(void)
 
 void menu(int CheatMode){
     int choice = 0;
+    int i = 0;
+    bool CheatActivated;
+
+    if(CheatMode == 1){
+        CheatActivated = false;
+    }
+    else{
+        CheatActivated = true;
+    }
+
     Text(CheatMode);
+    
     do{
         Text(CheatMode + 2);
         int buf_size = 2;
         choice = InputHandlerInt(buf_size);
         char konamicode[] = "wwssadadba ";
+        
+        if((choice % 2) == 0){//"choice%2" a scopo di test, sostituire con confronto dei caratteri in input per konami code
+            i++;
+            if(i == 3){
+                CheatMode = 2;
+                i = 0;
+                if(!CheatActivated){
+                    menu(CheatMode);
+                }
+            }
+        }
+        else{
+            i = 0;
+        }
+
         /*int len = sizeof(konamicode) / sizeof(konamicode[0]);
         fgets(buff, 2, stdin);
         char *endptr;
@@ -100,11 +126,6 @@ void menu(int CheatMode){
             case 3:
                 //trucchi
                 //accessibile con Konami's code
-                if (CheatMode == 1){//questa condizione va spostata fuori a konami code implementata
-                    CheatMode = 2;
-                    clear();
-                    menu(CheatMode);
-                }
                 //Use cheats
                 if (CheatMode == 2){
                     printf("You're welcome, dirty cheater!\n");
