@@ -47,7 +47,7 @@ void menu(int CheatMode){
         konamiChar = buff;
         char konamicode[] = "wwssadadba ";
         
-        if(konamicode[i] == *konamiChar){//"choice%2" a scopo di test, sostituire con confronto dei caratteri in input per konami code
+        if(konamicode[i] == *konamiChar){ 
             i++;
             if(i == 11){
                 CheatMode = 2;
