@@ -23,6 +23,7 @@ void clear(void)
 void menu(int CheatMode){
     int choice = 0;
     int i = 0;
+    char* konamiChar;
     bool CheatActivated;
 
     if(CheatMode == 1){
@@ -34,18 +35,25 @@ void menu(int CheatMode){
 
     Text(CheatMode);
     
-    do{
+    do{//ciclo del menu
         Text(CheatMode + 2);
         int buf_size = 2;
-        choice = InputHandlerInt(buf_size);
+
+        char *endptr;
+        char buff[buf_size];
+        fgets(buff, sizeof(buff), stdin);
+        choice = strtol(buff, &endptr, 10);
+
+        konamiChar = buff;
         char konamicode[] = "wwssadadba ";
         
-        if((choice % 2) == 0){//"choice%2" a scopo di test, sostituire con confronto dei caratteri in input per konami code
+        if(konamicode[i] == *konamiChar){//"choice%2" a scopo di test, sostituire con confronto dei caratteri in input per konami code
             i++;
-            if(i == 3){
+            if(i == 11){
                 CheatMode = 2;
                 i = 0;
                 if(!CheatActivated){
+                    clear();
                     menu(CheatMode);
                 }
             }
@@ -82,7 +90,6 @@ void menu(int CheatMode){
                 //Vedi la Sezione 3 per lo svolgimento e le regole del gioco.
                 player NewPlayer = {20, 0, 0, 0};
                 game(CheatMode, NewPlayer);
-                break;
             case 2:
                 //mostra i salvataggi da poter caricare
                 getchar();
@@ -109,7 +116,7 @@ void menu(int CheatMode){
                         break;
                     case 2:
                         //delete selected save from save file
-                        int Confirmation = 1;
+                        int Confirmation;
                         printf("\nSei sicuro di voler eliminare definitivamente il salvataggio?");
                         printf("\n  1. Si\n  2. No\n");
                         printf("\nSeleziona opzione [1-2]: ");
@@ -136,9 +143,9 @@ void menu(int CheatMode){
 
             default:
                 //TESTING PURPOSE
+                clear();
                 break;
         }
-        clear();
     }while(true);
 }
 
