@@ -22,6 +22,7 @@ void clear(void)
 
 void menu(int CheatMode){
     int choice = 0;
+    player NewPlayer = {20, 0, 0, 0};
     int i = 0;
     char* konamiChar;
     bool CheatActivated;
@@ -88,11 +89,12 @@ void menu(int CheatMode){
                 //Iniziera' una nuova partita dove all’avvio verra' creato l’eroe della storia, che iniziera' con
                 //20 punti vita, 0 monete, 0 oggetti, 0 missioni completate.
                 //Vedi la Sezione 3 per lo svolgimento e le regole del gioco.
-                player NewPlayer = {20, 0, 0, 0};
+                clear();
                 game(CheatMode, NewPlayer);
             case 2:
                 //mostra i salvataggi da poter caricare
                 getchar();
+                int Confirmation = 2;
                 int SaveIndex = 0;
                 int Option = 0;
                 printf("\nCarica Salvataggio:\n");
@@ -116,7 +118,6 @@ void menu(int CheatMode){
                         break;
                     case 2:
                         //delete selected save from save file
-                        int Confirmation;
                         printf("\nSei sicuro di voler eliminare definitivamente il salvataggio?");
                         printf("\n  1. Si\n  2. No\n");
                         printf("\nSeleziona opzione [1-2]: ");
@@ -149,16 +150,100 @@ void menu(int CheatMode){
     }while(true);
 }
 
-void game(int CheatMode, player player01){
+void palude_putrescente(void) {} //WORK IN PROGRESS
+void magione_infestata(void) {}
+void grotta_di_cristallo(void) {}
 
+void game(int CheatMode, player player01){
     bool PaludePutrescenteIsCompleted = false;
     bool MagioneInfestataIsCompleted = false;
     bool GrottaDiCristalloIsCompleted = false;
 
-    printf("TEST: You've started a new game now!\n");
-    int buf = 16;
-    int test;
-    test = InputHandlerInt(buf);
-    printf("\n%d is a number;\nPress Enter to escape from this place!!! ");
+    //printf("TEST: You've started a new game now!\n");
+    //int buf = 16;
+    //int test;
+    //test = InputHandlerInt(buf);
+    //printf("\n%d is a number;\nPress Enter to escape from this place!!! ");
+    
+    
+    bool menu_villaggio = true;
+    Text(5);
+
+    do{
+        printf("Seleziona una delle opzioni del menu [1-5]: ");
+        int choice_villaggio = 0;
+        int choice_missione = 0;
+        int buf_size = 2;
+        choice_villaggio = InputHandlerInt(buf_size);
+        switch (choice_villaggio) {
+            case 1: //intraprendi una missione, si apre il menu di scelta missione
+                clear();
+                Text(6);
+                do{
+                    printf("Seleziona una delle opzioni del menu [1-3]: ");
+                    choice_missione = InputHandlerInt(buf_size);
+                    switch(choice_missione) {
+                        case 1:
+                            clear();
+                            printf("\nBenvenuto nella palude putrescente!\n");
+                            game(CheatMode, player01);
+                            //palude_putrescente();
+                            break;
+                        case 2:
+                            clear();
+                            printf("\nBenvenuto nella magione infestata!\n");
+                            game(CheatMode, player01);
+                            //magione_infestata();
+                            break;
+                        case 3:
+                            clear();
+                            printf("\nBenvenuto nella grotta di cristallo!\n");
+                            game(CheatMode, player01);
+                            //grotta_di_cristallo();
+                            break;
+
+                        default:
+                            clear();
+                            break;
+                    }
+                }while(true);
+                clear(); 
+                break;
+            case 2: // riposo ripristina 20 punti vita
+                getchar();
+                player01.life = 20;
+                printf("\nI tuoi punti vita sono stati ripristinati!\n");
+                break;
+            case 3: //implementa inventario
+                break;
+            case 4: //implementa salvataggio
+                break;
+            case 5: //uscita 
+                getchar();
+                Text(7);
+                int conferma_uscita = 0;
+                conferma_uscita = InputHandlerInt(buf_size);
+                switch (conferma_uscita) {
+                    case 1: 
+                    menu_villaggio = false;
+                    break;
+
+                    case 2:
+                    clear();
+                    game(CheatMode, player01);
+
+                    default:
+                    clear();
+                    printf("Scelta non valida!\n");
+                    break;                
+                }
+            default:
+                //clear();
+                break;
+        }
+        clear();
+    }while(menu_villaggio);    
+    
     menu(CheatMode);
+    
 }
