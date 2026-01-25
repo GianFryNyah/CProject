@@ -11,6 +11,8 @@ typedef struct{
     int money;
     int items;
     int CompletedMissions;
+    int mission_selector;
+    int mission_selector_range;
 }player;
 
 void game(int CheatMode, player player01);
@@ -22,7 +24,6 @@ void clear(void)
 
 void menu(int CheatMode){
     int choice = 0;
-    player NewPlayer = {20, 0, 0, 0};
     int i = 0;
     char* konamiChar;
     bool CheatActivated;
@@ -90,6 +91,7 @@ void menu(int CheatMode){
                 //20 punti vita, 0 monete, 0 oggetti, 0 missioni completate.
                 //Vedi la Sezione 3 per lo svolgimento e le regole del gioco.
                 clear();
+                player NewPlayer = {20, 0, 0, 0, 6, 7};
                 game(CheatMode, NewPlayer);
             case 2:
                 //mostra i salvataggi da poter caricare
@@ -169,6 +171,9 @@ void game(int CheatMode, player player01){
     bool menu_villaggio = true;
     Text(5);
 
+    int mission_selector = player01.mission_selector;               // default 6, toccare solo per debugging
+    int mission_selector_range = player01.mission_selector_range;   // default 7, non toccare
+
     do{
         printf("Seleziona una delle opzioni del menu [1-5]: ");
         int choice_villaggio = 0;
@@ -178,28 +183,92 @@ void game(int CheatMode, player player01){
         switch (choice_villaggio) {
             case 1: //intraprendi una missione, si apre il menu di scelta missione
                 clear();
-                Text(6);
+                Text(mission_selector);
                 do{
-                    printf("Seleziona una delle opzioni del menu [1-3]: ");
+                    Text(mission_selector + mission_selector_range);
                     choice_missione = InputHandlerInt(buf_size);
                     switch(choice_missione) {
                         case 1:
-                            clear();
-                            printf("\nBenvenuto nella palude putrescente!\n");
-                            game(CheatMode, player01);
-                            //palude_putrescente();
+                            if(mission_selector == 6 || mission_selector == 9 || mission_selector == 10 || mission_selector == 11){
+                                clear();
+                                printf("\nBenvenuto nella palude putrescente!\n");
+
+                                if(mission_selector == 6 || mission_selector == 11){
+                                    player01.mission_selector += 1;
+                                }
+                                else if(mission_selector == 9){
+                                    player01.mission_selector -= 1;
+                                }
+
+                                game(CheatMode, player01); 
+                                //palude_putrescente();
+                            }
+                            else if(mission_selector == 7 || mission_selector == 12){
+                                clear();
+                                printf("\nBenvenuto nella magione infestata!\n");
+
+                                if(mission_selector == 7){
+                                    player01.mission_selector += 1;
+                                }
+
+                                game(CheatMode, player01);
+                                //magione_infestata();
+                            }
+                            else if(mission_selector == 8){
+                                clear();
+                                printf("\nBenvenuto nella grotta di cristallo!\n");
+                                game(CheatMode, player01);
+                                //grotta_di_cristallo();
+                            }                          
                             break;
                         case 2:
-                            clear();
-                            printf("\nBenvenuto nella magione infestata!\n");
-                            game(CheatMode, player01);
-                            //magione_infestata();
+                            if(mission_selector == 6 || mission_selector == 11){
+                                clear();
+                                printf("\nBenvenuto nella magione infestata!\n");
+
+                                if(mission_selector == 6){
+                                    player01.mission_selector += 3;
+                                }
+                                else if(mission_selector == 11){
+                                    player01.mission_selector -= 1;
+                                }
+
+                                game(CheatMode, player01);
+                                //magione_infestata();
+                            }
+                            else if(mission_selector == 7 || mission_selector == 9){
+                                clear();
+                                printf("\nBenvenuto nella grotta di cristallo!\n");
+
+                                if(mission_selector == 7){
+                                    player01.mission_selector += 5;
+                                }
+                                else if(mission_selector == 9){
+                                    player01.mission_selector += 1;
+                                }
+
+                                game(CheatMode, player01);
+                                //grotta_di_cristallo();
+                            }
+                            else{
+                                clear();
+                                break;
+                            }
                             break;
                         case 3:
-                            clear();
-                            printf("\nBenvenuto nella grotta di cristallo!\n");
-                            game(CheatMode, player01);
-                            //grotta_di_cristallo();
+                            if(mission_selector == 6){
+                                clear();
+                                printf("\nBenvenuto nella grotta di cristallo!\n");
+
+                                player01.mission_selector += 5;
+
+                                game(CheatMode, player01);
+                                //grotta_di_cristallo();
+                            }
+                            else{
+                                clear();
+                                break;
+                            }
                             break;
 
                         default:
@@ -220,7 +289,7 @@ void game(int CheatMode, player player01){
                 break;
             case 5: //uscita 
                 getchar();
-                Text(7);
+                Text(30);
                 int conferma_uscita = 0;
                 conferma_uscita = InputHandlerInt(buf_size);
                 switch (conferma_uscita) {

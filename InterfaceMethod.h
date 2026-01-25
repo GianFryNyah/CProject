@@ -11,6 +11,7 @@ int InputHandlerInt(int buf_size){
 
 void Text(int code){
     switch (code){
+        //MENU'
         case 1:
             printf("\nMenu Principale:\n");
             printf("\n  1. Nuova Partita\n  2. Carica Salvataggio\n");
@@ -29,16 +30,69 @@ void Text(int code){
             printf("\nMenu del Villaggio:\n");
             printf("\n  1. Intraprendi una missione\n  2. Riposati\n  3. Inventario\n  4. Salva la partita\n  5. Esci\n");
             break;
-        case 6:
+        //FINE MENU'
+        
+        //MENU' SCELTA MISSIONE
+        case 6: // P M G
             printf("\nMenu di Selezione Missione:\n");
             printf("\n  1. Palude Putrescente\n  2. Magione Infestata\n  3. Grotta di Cristallo\n");
             break;
-        case 7:
+        case 7: // M G
+            printf("\nMenu di Selezione Missione:\n");
+            printf("\n  1. Magione Infestata\n  2. Grotta di Cristallo\n");
+            break;
+        case 8: // G
+            printf("\nMenu di Selezione Missione:\n");
+            printf("\n  1. Grotta di Cristallo\n");
+            break;
+        case 9: // P G
+            printf("\nMenu di Selezione Missione:\n");
+            printf("\n  1. Palude Putrescente\n  2. Grotta di Cristallo\n");
+            break;
+        case 10: // P
+            printf("\nMenu di Selezione Missione:\n");
+            printf("\n  1. Palude Putrescente\n");
+            break;
+        case 11: // P M
+            printf("\nMenu di Selezione Missione:\n");
+            printf("\n  1. Palude Putrescente\n  2. Magione Infestata\n");
+            break;
+        case 12: // M
+            printf("\nMenu di Selezione Missione:\n");
+            printf("\n  1. Magione Infestata\n");
+            break;
+        //FINE MENU' SCELTA MISSIONE
+
+        //OPZIONE MENU SCELTA MISSIONE
+        case 13:
+            printf("Seleziona una delle opzioni del menu [1-3]: ");
+            break;
+        case 14:
+            printf("Seleziona una delle opzioni del menu [1-2]: ");
+            break;
+        case 15:
+            printf("Seleziona una delle opzioni del menu [1]: ");
+            break;
+        case 16:
+            printf("Seleziona una delle opzioni del menu [1-2]: ");
+            break;
+        case 17:
+            printf("Seleziona una delle opzioni del menu [1]: ");
+            break;
+        case 18:
+            printf("Seleziona una delle opzioni del menu [1-2]: ");
+            break;
+        case 19:
+            printf("Seleziona una delle opzioni del menu [1]: ");
+            break;
+        //FINE MENU' SCELTA MISSIONE
+
+        //EXIT
+        case 30:
             printf("\nStai uscendo dal gioco, ricordati di salvare la partita per non perdere i tuoi progressi. Sei sicuro di voler procedere?\n");
             printf("\n  1. Si\n  2. No\n");
             printf("\nSeleziona opzione [1-2]: ");
             break;
-        case 8:
-            break;
+        
     }
 }

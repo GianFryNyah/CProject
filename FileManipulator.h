@@ -36,7 +36,7 @@ void addSave(char* SaveStats){//It appends a save stat, given a string type with
         perror("Error opening file!");
     }
     int nlines = count_lines();
-    fprintf(pFile, "%d. %s%s", nlines, formatted_date, SaveStats);
+    fprintf(pFile, "%2d. %s%s", nlines, formatted_date, SaveStats);
     fclose(pFile);
     //printf("%s%sThere's %d saves on the file\n", formatted_date, SaveStats, nlines); //debug
 }
@@ -66,7 +66,22 @@ void deleteSave(int Num){//Remove a certain save stat given his index, passed as
         else if(Index > Num){
             int CIndex = Index;
             CIndex -= 1;
-            if(CIndex <= 9){
+
+            char SIndex[4];
+
+            if(CIndex < 10){
+                sprintf(SIndex, " %d", CIndex); 
+            }
+            else{
+                sprintf(SIndex, "%d", CIndex);
+            }
+
+            for(int i = 0; i < 2; i++){
+                data[i] = SIndex[i];
+            }
+            fprintf(cpFile, "%s", data);
+            
+            /*if(CIndex <= 9){
                 char SIndex[2];
                 sprintf(SIndex, "%d", CIndex);
                 data[0] = SIndex[0];
@@ -85,7 +100,7 @@ void deleteSave(int Num){//Remove a certain save stat given his index, passed as
                     data[i] = SIndex[i];
                 }
                 fprintf(cpFile, "%s", data);
-            }
+            }*/
         }
     }
     fclose(ppFile);
