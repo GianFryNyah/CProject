@@ -2,6 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+void clear(void)
+{
+    while ( getchar() != '\n' );
+}
+
 int InputHandlerInt(int buf_size){
     char *endptr;
     char buff[buf_size];

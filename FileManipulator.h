@@ -80,27 +80,6 @@ void deleteSave(int Num){//Remove a certain save stat given his index, passed as
                 data[i] = SIndex[i];
             }
             fprintf(cpFile, "%s", data);
-            
-            /*if(CIndex <= 9){
-                char SIndex[2];
-                sprintf(SIndex, "%d", CIndex);
-                data[0] = SIndex[0];
-                if(Index == 10){
-                    int lenght = strlen(data);
-                    for (int i = 1; i < lenght; i++){
-                        data[i] = data[i+1];
-                    }
-                }
-                fprintf(cpFile, "%s", data);
-            }
-            else if(CIndex >= 10){
-                char SIndex[4];
-                sprintf(SIndex, "%d", CIndex);
-                for(int i = 0; i < 2; i++){
-                    data[i] = SIndex[i];
-                }
-                fprintf(cpFile, "%s", data);
-            }*/
         }
     }
     fclose(ppFile);

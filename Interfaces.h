@@ -17,11 +17,6 @@ typedef struct{
 
 void game(int CheatMode, player player01);
 
-void clear(void)
-{
-    while ( getchar() != '\n' );
-}
-
 void menu(int CheatMode){
     int choice = 0;
     int i = 0;
@@ -64,10 +59,7 @@ void menu(int CheatMode){
             i = 0;
         }
 
-        /*int len = sizeof(konamicode) / sizeof(konamicode[0]);
-        fgets(buff, 2, stdin);
-        char *endptr;
-        choice = strtol(buff, &endptr, 10);*/
+        //DEBUG TOOLS
 
         //MENU CHOICE TESTING PURPOSE
         //printf("\n%d\n", choice);
@@ -157,15 +149,11 @@ void magione_infestata(void) {}
 void grotta_di_cristallo(void) {}
 
 void game(int CheatMode, player player01){
+    // I booleani qua sotto devono stare fuori da game()
+    // altrimenti ritornerebbero tutti sempre a false ad ogni chiamata di game() ( che avviene alla fine di ogni missione in teoria )
     bool PaludePutrescenteIsCompleted = false;
     bool MagioneInfestataIsCompleted = false;
     bool GrottaDiCristalloIsCompleted = false;
-
-    //printf("TEST: You've started a new game now!\n");
-    //int buf = 16;
-    //int test;
-    //test = InputHandlerInt(buf);
-    //printf("\n%d is a number;\nPress Enter to escape from this place!!! ");
     
     
     bool menu_villaggio = true;
@@ -180,7 +168,7 @@ void game(int CheatMode, player player01){
         int choice_missione = 0;
         int buf_size = 2;
         choice_villaggio = InputHandlerInt(buf_size);
-        switch (choice_villaggio) {
+        switch (choice_villaggio) { // Implementazione logica del menu di selezione missione
             case 1: //intraprendi una missione, si apre il menu di scelta missione
                 clear();
                 Text(mission_selector);
