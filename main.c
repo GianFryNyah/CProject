@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "Interfaces.c"
+#include "Interfaces.h"
 
 int main(){
     int CheatMode = 1;

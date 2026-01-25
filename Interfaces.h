@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include "DiceThrow.c"
-#include "FileManipulator.c"
-#include "InterfaceMethod.c"
+#include "DiceThrow.h"
+#include "FileManipulator.h"
+#include "InterfaceMethod.h"
 
 typedef struct{
     int life;
