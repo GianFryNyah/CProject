@@ -5,6 +5,7 @@
 #include "DiceThrow.h"
 #include "FileManipulator.h"
 #include "InterfaceMethod.h"
+#define BUF 128
 
 typedef struct{
     int life;
@@ -274,6 +275,15 @@ void game(int CheatMode, player player01){
             case 3: //implementa inventario
                 break;
             case 4: //implementa salvataggio
+                char SaveStats[BUF];
+                //DEBUG
+                //player01.life = 17;
+                //player01.money = 72;
+                //player01.items = 9;
+                //player01.CompletedMissions = 2;
+                //DEBUG
+                snprintf(SaveStats, BUF, ", %02d P . VITA , %03d MONETE , %02d OGGETTI , %01d MISSIONI COMPLETATE\n", player01.life, player01.money, player01.items, player01.CompletedMissions);
+                addSave(SaveStats);
                 break;
             case 5: //uscita 
                 getchar();
