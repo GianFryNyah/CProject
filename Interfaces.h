@@ -5,18 +5,20 @@
 #include "DiceThrow.h"
 #include "FileManipulator.h"
 #include "InterfaceMethod.h"
+#include "strutture.h"
+#include "palude_putrescente.h"
 #define BUF 128
 
-typedef struct{
+/*typedef struct{
     int life;
     int money;
     int items;
     int CompletedMissions;
     int mission_selector;
     int mission_selector_range;
-}player;
+}player;*/
 
-void game(int CheatMode, player player01);
+void game(player player01, int CheatMode);
 
 void menu(int CheatMode){
     int choice = 0;
@@ -85,7 +87,7 @@ void menu(int CheatMode){
                 //Vedi la Sezione 3 per lo svolgimento e le regole del gioco.
                 clear();
                 player NewPlayer = {20, 0, 0, 0, 6, 7};
-                game(CheatMode, NewPlayer);
+                game(NewPlayer, CheatMode);
             case 2:
                 //mostra i salvataggi da poter caricare
                 getchar();
@@ -145,11 +147,11 @@ void menu(int CheatMode){
     }while(true);
 }
 
-void palude_putrescente(void) {} //WORK IN PROGRESS
-void magione_infestata(void) {}
-void grotta_di_cristallo(void) {}
+//bool palude_putrescente(player) {} //WORK IN PROGRESS
+//void magione_infestata(void) {}
+//void grotta_di_cristallo(void) {}
 
-void game(int CheatMode, player player01){
+void game(player player01, int CheatMode){
     // I booleani qua sotto devono stare fuori da game()
     // altrimenti ritornerebbero tutti sempre a false ad ogni chiamata di game() ( che avviene alla fine di ogni missione in teoria )
     bool PaludePutrescenteIsCompleted = false;
@@ -181,6 +183,8 @@ void game(int CheatMode, player player01){
                             if(mission_selector == 6 || mission_selector == 9 || mission_selector == 10 || mission_selector == 11){
                                 clear();
                                 printf("\nBenvenuto nella palude putrescente!\n");
+                                //INIZIO MISSIONE
+                                palude_putrescente(player01);
 
                                 if(mission_selector == 6 || mission_selector == 11){
                                     player01.mission_selector += 1;
@@ -189,7 +193,7 @@ void game(int CheatMode, player player01){
                                     player01.mission_selector -= 1;
                                 }
 
-                                game(CheatMode, player01); 
+                                game(player01, CheatMode); 
                                 //palude_putrescente();
                             }
                             else if(mission_selector == 7 || mission_selector == 12){
@@ -200,13 +204,13 @@ void game(int CheatMode, player player01){
                                     player01.mission_selector += 1;
                                 }
 
-                                game(CheatMode, player01);
+                                game(player01, CheatMode);
                                 //magione_infestata();
                             }
                             else if(mission_selector == 8){
                                 clear();
                                 printf("\nBenvenuto nella grotta di cristallo!\n");
-                                game(CheatMode, player01);
+                                game(player01, CheatMode);
                                 //grotta_di_cristallo();
                             }                          
                             break;
@@ -222,7 +226,7 @@ void game(int CheatMode, player player01){
                                     player01.mission_selector -= 1;
                                 }
 
-                                game(CheatMode, player01);
+                                game(player01, CheatMode);
                                 //magione_infestata();
                             }
                             else if(mission_selector == 7 || mission_selector == 9){
@@ -236,7 +240,7 @@ void game(int CheatMode, player player01){
                                     player01.mission_selector += 1;
                                 }
 
-                                game(CheatMode, player01);
+                                game(player01, CheatMode);
                                 //grotta_di_cristallo();
                             }
                             else{
@@ -251,7 +255,7 @@ void game(int CheatMode, player player01){
 
                                 player01.mission_selector += 5;
 
-                                game(CheatMode, player01);
+                                game(player01, CheatMode);
                                 //grotta_di_cristallo();
                             }
                             else{
@@ -268,7 +272,6 @@ void game(int CheatMode, player player01){
                 clear(); 
                 break;
             case 2: // riposo ripristina 20 punti vita
-                getchar();
                 player01.life = 20;
                 printf("\nI tuoi punti vita sono stati ripristinati!\n");
                 break;
@@ -297,7 +300,7 @@ void game(int CheatMode, player player01){
 
                     case 2:
                     clear();
-                    game(CheatMode, player01);
+                    game(player01, CheatMode);
 
                     default:
                     clear();
