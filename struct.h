@@ -1,5 +1,5 @@
-#ifndef STRUTTURE_H
-#define STRUTTURE_H
+#ifndef STRUCT_H
+#define STRUCT_H
 
 #include <stdbool.h>
 
@@ -10,8 +10,14 @@ typedef struct{
     int CompletedMissions;
     int mission_selector;
     int mission_selector_range;
+    int potions;
+    bool palude;
+    bool magione;
+    bool grotta;
     bool armor;
     bool sword;
+    bool heroSword;
+    bool CastleKey;
 }player;
 
 typedef struct{

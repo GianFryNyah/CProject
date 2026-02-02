@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
-#include "strutture.h"
+#include "struct.h"
 //#include "DiceThrow.h"
 //#include "InterfaceMethod.h"
 

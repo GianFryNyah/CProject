@@ -2,11 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <stdbool.h>
+#include "struct.h"
 #define BUFF 4096
 
 int count_lines(); //Used by addSave(char* string); It return the number of lines (counting \n) of a text file
 
-void ShowSaves(){
+void ShowSaves(){ // Obsoleta DA RIMUOVERE ma NON ADESSO
     FILE *pFile = fopen("savefile.txt", "r");
     
     char data[BUFF];
@@ -20,6 +22,45 @@ void ShowSaves(){
     fclose(pFile);
     printf("\n");
 }
+
+void newShowSaves(){
+    FILE *cpFile = fopen("savefile_copy.txt", "w");
+    if (cpFile == NULL){
+        perror("Error opening file!");
+    }
+    FILE *ppFile = fopen("savefile.txt", "r");
+    if (ppFile == NULL){
+        perror("Error opening file!");
+    }
+
+    char data[BUFF];
+
+    while(fgets(data, BUFF, ppFile) != NULL){
+        char temp[86] = "\0";
+        for(int i = 0; i < 86; i++){
+            temp[i] = data[i];
+        }
+        fprintf(cpFile, "%s\n", temp);
+    }
+
+    fclose(ppFile);
+    fclose(cpFile);
+
+    FILE *pFile = fopen("savefile_copy.txt", "r");
+    
+    if(pFile == NULL){
+        printf("Error opening file!");
+    }
+
+    while(fgets(data, BUFF, pFile) != NULL){
+        printf("\t%s", data);
+    }
+    fclose(pFile);
+    printf("\n");
+
+    remove("savefile_copy.txt");
+}
+
 void addSave(char* SaveStats){//It appends a save stat, given a string type with player stats (this function do the indexing job)
     //TIMESTAMP FOR NEW SAVE
     time_t rawtime;
@@ -103,7 +144,123 @@ void deleteSave(int Num){//Remove a certain save stat given his index, passed as
     remove("savefile_copy.txt");
 }
 
-void loadSave(){}
+player loadSave(int Num){
+    // Conad, persone oltre le cose!
+    //IT DELETS ONE SPECIFIED SAVE BY PASSING IS INDEX NUMBER
+    //IT THEN RE-SORT SAVE FILE INDEXING
+    FILE *ppFile = fopen("savefile.txt", "r");
+    if (ppFile == NULL){
+        perror("Error opening file!");
+    }
+
+    char data[BUFF];
+    while(fgets(data, BUFF, ppFile) != NULL){
+        char *endptr;
+        int Index = strtol(data, &endptr, 10);
+        if(Index != Num){
+            continue;
+        }
+        else if(Num == Index){
+            // Qua al posto del debug vanno estrapolati i dati che serviranno dopo a inizializzare la struct player
+            // verosimilmente rendermo questa funzione di tipo player, ci deve tornare un player settato per come vogliamo\
+            // implementeremo una funzione molto simile per la modifiche del salvataggio tramite konami code
+
+            int life; int money; int items; int CompletedMissions; bool palude; bool magione; bool grotta; bool armor; bool sword; bool heroSword; int potions;
+            bool CastleKey; int mission_selector; int mission_selector_range = 7;
+
+            // coordinates: 24-25 ; 38-40 ; 51-52 ; 64 ; 86 ; 87 ; 88 ; 90 ; 91 ; 92 ; 94 ; ? 95 ? ( se potions > 9 )
+            char oneDigitsHolder[2] = "\0"; char twoDigitsHolder[3] = "\0"; char threeDigitsHolder[4] = "\0";
+
+            // LIFE EXTRAPOLATION
+            int y = 0;
+            for(int i = 25; i <= 26; i++){
+                twoDigitsHolder[y] = data[i];
+                y++;
+            }
+            char* endptr;
+            life = strtol(twoDigitsHolder, &endptr, 10);
+
+            // MONEY EXTRAPOLATION
+            y = 0;
+            for(int i = 39; i <= 41; i++){
+                threeDigitsHolder[y] = data[i];
+                y++;
+            }
+            money = strtol(threeDigitsHolder, &endptr, 10);
+
+            // ITEMS EXTRAPOLATION
+            y = 0;
+            for(int i = 52; i <= 53; i++){
+                twoDigitsHolder[y] = data[i];
+                y++;
+            }
+            items = strtol(twoDigitsHolder, &endptr, 10);
+
+            // COMPLETEDMISSIONS EXTRAPOLATION
+            oneDigitsHolder[0] = data[65];
+            CompletedMissions = strtol(oneDigitsHolder, &endptr, 10);
+
+            // BOOLS EXTRAPOLATION
+            oneDigitsHolder[0] = data[87];
+            int num;
+            num = strtol(oneDigitsHolder, &endptr, 10);
+            if(num == 1){ palude = true;}
+            else{palude = false;}
+
+            oneDigitsHolder[0] = data[88];
+            num = strtol(oneDigitsHolder, &endptr, 10);
+            if(num == 1){ magione = true;}
+            else{magione = false;}
+
+            oneDigitsHolder[0] = data[89];
+            num = strtol(oneDigitsHolder, &endptr, 10);
+            if(num == 1){ grotta = true;}
+            else{grotta = false;}
+
+            oneDigitsHolder[0] = data[89];
+            num = strtol(oneDigitsHolder, &endptr, 10);
+            if(num == 1){ CastleKey = true;}
+            else{CastleKey = false;}
+
+            oneDigitsHolder[0] = data[91];
+            num = strtol(oneDigitsHolder, &endptr, 10);
+            if(num == 1){ armor = true;}
+            else{armor = false;}
+
+            oneDigitsHolder[0] = data[92];
+            num = strtol(oneDigitsHolder, &endptr, 10);
+            if(num == 1){ sword = true;}
+            else{sword = false;}
+
+            oneDigitsHolder[0] = data[93];
+            num = strtol(oneDigitsHolder, &endptr, 10);
+            if(num == 1){ heroSword = true;}
+            else{heroSword = false;}
+
+            // MISSION_SELECTOR EXTRAPOLATION
+            oneDigitsHolder[0] = data[94];
+            mission_selector = strtol(oneDigitsHolder, &endptr, 10);
+
+            // POTIONS EXTRAPOLATION
+            y = 0;
+            for(int i = 95; i <= 96; i++){
+                twoDigitsHolder[y] = data[i];
+                y++;
+            }
+            potions = strtol(twoDigitsHolder, &endptr, 10);
+
+            player playerToLoad = {life, money, items, CompletedMissions, mission_selector, mission_selector_range, potions, palude, magione, grotta, armor, sword, heroSword, CastleKey};
+            return playerToLoad;
+        }
+    }
+
+    fclose(ppFile);
+
+    // Estrapolazione delle statistiche
+    // DEBUG
+    //printf("\n%s\n", *SaveStat);
+    // DEBUG
+}
 
 int count_lines(){
     //DA STUDIARE MEGLIO

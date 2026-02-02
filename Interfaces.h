@@ -5,7 +5,7 @@
 #include "DiceThrow.h"
 #include "FileManipulator.h"
 #include "InterfaceMethod.h"
-#include "strutture.h"
+#include "struct.h"
 #include "palude_putrescente.h"
 #define BUF 128
 
@@ -86,7 +86,7 @@ void menu(int CheatMode){
                 //20 punti vita, 0 monete, 0 oggetti, 0 missioni completate.
                 //Vedi la Sezione 3 per lo svolgimento e le regole del gioco.
                 clear();
-                player NewPlayer = {20, 0, 0, 0, 6, 7};
+                player NewPlayer = {20, 0, 0, 0, 6, 7, 0, false, false, false, false, false, false, false};
                 game(NewPlayer, CheatMode);
             case 2:
                 //mostra i salvataggi da poter caricare
@@ -96,7 +96,8 @@ void menu(int CheatMode){
                 int Option = 0;
                 printf("\nCarica Salvataggio:\n");
                 printf("\n");
-                ShowSaves();
+                //ShowSaves();
+                newShowSaves();
                 printf("\nSeleziona un salvataggio: ");
                 //clear();
                 int buf_size = 8;
@@ -109,8 +110,26 @@ void menu(int CheatMode){
                 switch (Option){
                     case 1:
                         //load save stats
-                        printf("\nLoading...");
-                        menu(CheatMode);
+                        //printf("\nLoading...");
+                        player MasterChief = loadSave(SaveIndex);
+
+                        // DEBUG // DEBUG // DEBUG
+                        // DEBUG // DEBUG // DEBUG
+                        printf("\n%d Punti Vita, ", MasterChief.life);
+                        printf("%d Monete, ", MasterChief.money);
+                        printf("%d Oggetti, ", MasterChief.items);
+                        printf("%d Missioni completate, ", MasterChief.CompletedMissions);
+                        printf("Missione Palude: %s , ", (MasterChief.palude) ? "Completata" : "Non completata");
+                        printf("Missione Magione: %s , ", (MasterChief.magione) ? "Completata" : "Non completata");
+                        printf("Missione Grotta: %s", (MasterChief.grotta) ? "Completata\n" : "Non completata\n");
+                        printf("Ha l'armatura?: %s , ", (MasterChief.armor) ? "Si'" : "No");
+                        printf("Ha la Spada?: %s , ", (MasterChief.sword) ? "Si'" : "No");
+                        printf("Ha la Spada dell'Eroe?: %s , ", (MasterChief.heroSword) ? "Si'" : "No");
+                        printf("Numero Pozioni: %d\n", MasterChief.potions);
+                        // DEBUG // DEBUG // DEBUG
+                        // DEBUG // DEBUG // DEBUG
+
+                        game(MasterChief, CheatMode);
                         //here ask for additional enter, to fix ( maybe ?)
                         break;
                     case 2:
@@ -285,7 +304,7 @@ void game(player player01, int CheatMode){
                 //player01.items = 9;
                 //player01.CompletedMissions = 2;
                 //DEBUG
-                snprintf(SaveStats, BUF, ", %02d P . VITA , %03d MONETE , %02d OGGETTI , %01d MISSIONI COMPLETATE\n", player01.life, player01.money, player01.items, player01.CompletedMissions);
+                snprintf(SaveStats, BUF, ", %02d P . VITA , %03d MONETE , %02d OGGETTI , %01d MISSIONI COMPLETATE %d%d%d%d%d%d%d%d%d \n", player01.life, player01.money, player01.items, player01.CompletedMissions, player01.palude, player01.magione, player01.grotta, player01.CastleKey, player01.armor, player01.sword, player01.heroSword, player01.mission_selector, player01.potions);
                 addSave(SaveStats);
                 break;
             case 5: //uscita 
