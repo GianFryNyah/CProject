@@ -306,6 +306,7 @@ void game(player player01, int CheatMode){
                 //DEBUG
                 snprintf(SaveStats, BUF, ", %02d P . VITA , %03d MONETE , %02d OGGETTI , %01d MISSIONI COMPLETATE %d%d%d%d%d%d%d%d%d \n", player01.life, player01.money, player01.items, player01.CompletedMissions, player01.palude, player01.magione, player01.grotta, player01.CastleKey, player01.armor, player01.sword, player01.heroSword, player01.mission_selector, player01.potions);
                 addSave(SaveStats);
+                printf("\n\t Game saved successfully!\n\n");
                 break;
             case 5: //uscita 
                 getchar();
