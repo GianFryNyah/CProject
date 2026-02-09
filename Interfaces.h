@@ -6,7 +6,7 @@
 #include "FileManipulator.h"
 #include "InterfaceMethod.h"
 #include "struct.h"
-#include "palude_putrescente.h"
+//#include "palude_putrescente.h"
 #define BUF 128
 
 /*typedef struct{
@@ -170,6 +170,8 @@ void menu(int CheatMode){
 //void magione_infestata(void) {}
 //void grotta_di_cristallo(void) {}
 
+void palude_putrescente(player* player01, int* dungeon_rooms, int* RoomPointer, int CheatMode);
+
 void game(player player01, int CheatMode){
     // I booleani qua sotto devono stare fuori da game()
     // altrimenti ritornerebbero tutti sempre a false ad ogni chiamata di game() ( che avviene alla fine di ogni missione in teoria )
@@ -202,8 +204,15 @@ void game(player player01, int CheatMode){
                             if(mission_selector == 6 || mission_selector == 9 || mission_selector == 10 || mission_selector == 11){
                                 clear();
                                 printf("\nBenvenuto nella palude putrescente!\n");
+
                                 //INIZIO MISSIONE
-                                palude_putrescente(player01);
+                                int* Pdungeon_rooms = malloc(10);
+                                int* RoomPointer;
+                                palude_putrescente(&player01, Pdungeon_rooms, RoomPointer, CheatMode);
+                                player01.palude = true;
+                                // deallocazione memoria
+                                free(Pdungeon_rooms);
+                                Pdungeon_rooms = NULL;
 
                                 if(mission_selector == 6 || mission_selector == 11){
                                     player01.mission_selector += 1;
@@ -336,4 +345,265 @@ void game(player player01, int CheatMode){
     
     menu(CheatMode);
     
+}
+
+void combattimento(player *player01, foe tipo_nemico, int CheatMode){
+
+    printf("L'eroe incontra %s e inizia il combattimento.\n", tipo_nemico.nome_nemico);
+                                             
+    int risultato_dado = DiceThrow();
+    int attacco_eroe = 0;
+                        
+    if (player01->sword == true && player01->armor == true){
+        attacco_eroe = risultato_dado + 1; // spada
+        tipo_nemico.danno_nemico--; // armatura
+        while (attacco_eroe < tipo_nemico.colpo_fatale) {
+            printf("Viene lanciato un dado per stabilire l'attacco dell'eroe.\n");
+            printf("Il risultato e': %d\n", risultato_dado);
+            printf("L'attacco dell'eroe aumenta di un punto grazie alla spada!");
+            
+            printf("Attacco non sufficiente per sconfiggere %s (%d < Colpo fatale = %d)\n", tipo_nemico.nome_nemico, attacco_eroe, tipo_nemico.colpo_fatale);
+            player01->life -= tipo_nemico.danno_nemico;
+            printf("Il danno inflitto dal nemico cala di un punto grazie all'armatura!\n");
+
+            printf("%s infligge %d danni all'eroe! ", tipo_nemico.nome_nemico, tipo_nemico.danno_nemico);
+            printf("L'eroe rimane con %d punti vita.\n", (player01->life <= 0) ? 0 : player01->life);
+            //printf("%s infligge %d danni all'eroe! L'eroe rimane con %d punti vita.", tipo_nemico.nome_nemico, tipo_nemico.danno_nemico, player01->life);
+                        
+            if (player01->life <= 0) {
+                printf("L'eroe e' stato sconfitto!\n");              
+                clear();
+                menu(CheatMode);
+            }
+            
+            risultato_dado = DiceThrow();
+            attacco_eroe = risultato_dado + 1;
+        }
+    } 
+    else if (player01->sword == true) {
+        attacco_eroe = risultato_dado + 1; // spada
+        while (attacco_eroe < tipo_nemico.colpo_fatale) {
+            printf("Viene lanciato un dado per stabilire l'attacco dell'eroe.\n");
+            printf("Il risultato e': %d\n", risultato_dado);
+            printf("L'attacco dell'eroe aumenta di un punto grazie alla spada!");
+                            
+            printf("Attacco non sufficiente per sconfiggere %s (%d < Colpo fatale = %d)\n", tipo_nemico.nome_nemico, attacco_eroe, tipo_nemico.colpo_fatale);
+            player01->life -= tipo_nemico.danno_nemico;
+
+            printf("%s infligge %d danni all'eroe! ", tipo_nemico.nome_nemico, tipo_nemico.danno_nemico);
+            printf("L'eroe rimane con %d punti vita.\n", (player01->life <= 0) ? 0 : player01->life);
+                        
+            if (player01->life <= 0) {
+                printf("L'eroe e' stato sconfitto!\n");
+                clear();
+                menu(CheatMode);
+            }
+            risultato_dado = DiceThrow();
+            attacco_eroe = risultato_dado + 1;
+        }
+    }
+    else if (player01->armor == true) {
+        tipo_nemico.danno_nemico--; // armatura
+        attacco_eroe = risultato_dado;
+        while (attacco_eroe < tipo_nemico.colpo_fatale) {
+            printf("Viene lanciato un dado per stabilire l'attacco dell'eroe.\n");
+            printf("Il risultato e': %d", risultato_dado);
+                            
+            printf("Attacco non sufficiente per sconfiggere %s (%d < Colpo fatale = %d)\n", tipo_nemico.nome_nemico, attacco_eroe, tipo_nemico.colpo_fatale);
+            player01->life -= tipo_nemico.danno_nemico;
+            printf("Il danno inflitto dal nemico cala di un punto grazie all'armatura!\n");
+
+            //if (player01->life <= 0) player01->life = 0;
+
+            printf("%s infligge %d danni all'eroe! ", tipo_nemico.nome_nemico, tipo_nemico.danno_nemico);
+            printf("L'eroe rimane con %d punti vita.\n", (player01->life <= 0) ? 0 : player01->life);
+            //printf("%s infligge %d danni all'eroe! L'eroe rimane con %d punti vita.", tipo_nemico.nome_nemico, tipo_nemico.danno_nemico, player01->life);
+                        
+            if (player01->life <= 0) {
+                printf("L'eroe e' stato sconfitto!\n");
+                clear();
+                menu(CheatMode);
+            }
+
+            risultato_dado = DiceThrow();
+            attacco_eroe = risultato_dado;
+        }
+    } 
+    else {
+        attacco_eroe = risultato_dado;
+        while (attacco_eroe < tipo_nemico.colpo_fatale) {
+            printf("Viene lanciato un dado per stabilire l'attacco dell'eroe.\n");
+            printf("Il risultato e': %d", risultato_dado);
+            
+            printf("Attacco non sufficiente per sconfiggere %s (%d < Colpo fatale = %d)\n", tipo_nemico.nome_nemico, attacco_eroe, tipo_nemico.colpo_fatale);
+            player01->life -= tipo_nemico.danno_nemico;
+
+            printf("%s infligge %d danni all'eroe! ", tipo_nemico.nome_nemico, tipo_nemico.danno_nemico);
+            printf("L'eroe rimane con %d punti vita.\n", (player01->life <= 0) ? 0 : player01->life);
+                        
+            if (player01->life <= 0) {
+                printf("L'eroe e' stato sconfitto!\n");
+                clear();
+                menu(CheatMode);
+            }
+            risultato_dado = DiceThrow();
+            attacco_eroe = risultato_dado;
+        }
+    }
+    
+    printf("Viene lanciato un dado per stabilire l'attacco dell'eroe.\n");
+    printf("Il risultato e': %d", risultato_dado);
+    printf("%s viene sconfitto (%d >= Colpo fatale = %d)\n", tipo_nemico.nome_nemico, attacco_eroe, tipo_nemico.colpo_fatale);
+    player01->money += tipo_nemico.monete_nemico;
+    printf("%s infligge %d danni all'eroe! ", tipo_nemico.nome_nemico, tipo_nemico.danno_nemico);
+    printf("L'eroe rimane con %d punti vita.", (player01->life <= 0) ? 0 : player01->life);  
+}
+
+void rooms_generator(int* dungeon_rooms){
+    //srand(time(NULL));
+    int cnt = 0;
+    int entropy;
+
+    for(int i = 0; i < 10; i++){
+        entropy = DiceThrow();
+        if(cnt <= 3 && i <= 6){
+            entropy = DiceThrow();
+            dungeon_rooms[i] = DiceThrow();
+            entropy = DiceThrow();
+            if(dungeon_rooms[i] == 6){
+                cnt++;
+            }
+        }
+        else if(cnt == 3){
+            dungeon_rooms[i] = 0;
+        }
+        else if(cnt >= 1 && i <= 7){
+            entropy = DiceThrow();
+            dungeon_rooms[i] = DiceThrow();
+            entropy = DiceThrow();
+            if(dungeon_rooms[i] == 6){
+                cnt++;
+            }
+        }
+        else if(cnt >= 2 && i <= 8){
+            entropy = DiceThrow();
+            dungeon_rooms[i] = DiceThrow();
+            entropy = DiceThrow();
+            if(dungeon_rooms[i] == 6){
+                cnt++;
+            }
+        }
+        else{
+            dungeon_rooms[i] = 6;
+        }
+    }
+    
+    return;
+}
+
+void palude_putrescente(player* player01, int* dungeon_rooms, int* RoomPointer, int CheatMode) {
+    // template Menu' di Missione
+    srand(time(NULL));
+    Text(20);
+
+    int objective = 0;
+
+    rooms_generator(dungeon_rooms);
+    RoomPointer = dungeon_rooms;
+    
+    // do-while nel quale si svolgera' la missione, uscire solo quando la missione deve finire
+    do{
+        // scope interno DO-WHILE
+
+        // variabili di supporto per funzionalita' MENU'
+        int choice_palude = 0;
+        int choice_negozio = 0;
+        int beneficio_pozione = 0;
+        int buf_size = 2;
+
+        // prompt scelta da selezionare, da ripetersi fino ad input valido
+        Text(21); // scelta tra 1 e 4 compresi
+        choice_palude = InputHandlerInt(buf_size);
+
+        switch(choice_palude){
+            case 1:
+                int room = *RoomPointer;
+
+                switch(room){
+                    case 1:
+                        foe cane_selvaggio = {"Cane Selvaggio", 2, 1, 0};
+                        combattimento(player01, cane_selvaggio, CheatMode);
+                        break;
+                    case 2:
+                        foe goblin = {"Goblin", 3, 2, 2};
+                        combattimento(player01, goblin, CheatMode);
+                        break;
+                    case 3:
+                        foe scheletro = {"Scheletro", 4, 2, 4};
+                        combattimento(player01, scheletro, CheatMode);
+                        break;
+                    case 4:
+                        foe orco = {"Orco", 3, 4, 6};
+                        combattimento(player01, orco, CheatMode);
+                        break;
+                    case 5:
+                        // stanza trappola
+                        // il danno e' compreso tra 1 e 6 ed e' stabilito dal tiro del dado
+                        foe accquitrino = {"Acquitrino Velenoso", 0, 0, 0};
+                        combattimento(player01, accquitrino, CheatMode);
+                        break;
+                    case 6:
+                        // requisito per superare la missione: sconfiggerne tre
+
+                        if(player01->sword){
+                            foe generale_orco = {"Generale Orco", 5, 3, 12};
+                            combattimento(player01, generale_orco, CheatMode);
+                            objective++;
+                        }
+                        else{
+                            foe generale_orco = {"Generale Orco", 6, 3, 12};
+                            combattimento(player01, generale_orco, CheatMode);
+                            objective++;
+                    }
+
+                    break;
+                }
+                printf("\n\nNumero di generali aaaa: %d\n\n", objective);
+                RoomPointer++;
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                // DEBUG DEBUG DEBUG DEBUG
+                player01->money = 50;
+                // DEBUG DEBUG DEBUG DEBUG
+                if(player01->money >= 50){
+                    player01->money -= 50;
+                    clear();
+                    game(*player01, CheatMode);
+                }
+                else{
+                    Text(50);
+                }
+                break;
+            default:
+                break;
+            // FINE SWITCH
+        }
+
+        if(objective >= 1){
+            clear();
+            return;
+        }
+
+        clear();
+    
+    } while(true);
+
+    // scope palude_putrescente(), si esegue il codice seguente solo a fine missione
+    printf("!!!!!!!!!!!!!!!");
+
+    return;
 }

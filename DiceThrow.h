@@ -3,7 +3,6 @@
 #include <time.h>
 
 int DiceThrow(){
-    srand(time(NULL));
     int min = 1;
     int max = 6;
     int throw = ( rand() % ( max - min + 1 ) ) + min;

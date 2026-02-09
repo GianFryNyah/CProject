@@ -25,7 +25,7 @@ typedef struct{
     int colpo_fatale;
     int danno_nemico;
     int monete_nemico;   
-}nemico;
+}foe;
 
 #endif 
 

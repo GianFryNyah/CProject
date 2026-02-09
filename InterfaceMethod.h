@@ -91,13 +91,25 @@ void Text(int code){
             printf("Seleziona una delle opzioni del menu [1]: ");
             break;
         //FINE MENU' SCELTA MISSIONE
-
+        case 20:
+            printf("\nMenu di missione:\n");
+            printf("1. Esplora stanza del Dungeon\n");
+            printf("2. Negozio\n");
+            printf("3. Inventario\n");
+            printf("4. Torna al Villaggio (Paga 50 monete)\n");
+            break;
+        case 21:
+            printf("\nSeleziona una delle opzioni del menu [1-4]: ");
+            break;
+        
         //EXIT
         case 30:
             printf("\nStai uscendo dal gioco, ricordati di salvare la partita per non perdere i tuoi progressi. Sei sicuro di voler procedere?\n");
             printf("\n  1. Si\n  2. No\n");
             printf("\nSeleziona opzione [1-2]: ");
             break;
-        
+        case 50:
+            printf("\nNon hai abbastanza monete per tornare al Villaggio!\n");
+            break;
     }
 }
