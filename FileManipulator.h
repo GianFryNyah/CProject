@@ -5,10 +5,11 @@
 #include <stdbool.h>
 #include "struct.h"
 #define BUFF 4096
+#define BUF 128
 
 int count_lines(); //Used by addSave(char* string); It return the number of lines (counting \n) of a text file
 
-void ShowSaves(){ // Obsoleta DA RIMUOVERE ma NON ADESSO
+/*void ShowSaves(){ // Obsoleta DA RIMUOVERE ma NON ADESSO
     FILE *pFile = fopen("savefile.txt", "r");
     
     char data[BUFF];
@@ -21,7 +22,7 @@ void ShowSaves(){ // Obsoleta DA RIMUOVERE ma NON ADESSO
     }
     fclose(pFile);
     printf("\n");
-}
+}*/
 
 void newShowSaves(){
     FILE *cpFile = fopen("savefile_copy.txt", "w");
@@ -36,10 +37,11 @@ void newShowSaves(){
     char data[BUFF];
 
     while(fgets(data, BUFF, ppFile) != NULL){
-        char temp[86] = "\0";
+        char temp[87] = "\0";
         for(int i = 0; i < 86; i++){
             temp[i] = data[i];
         }
+        temp[86] = '\0';
         fprintf(cpFile, "%s\n", temp);
     }
 
@@ -250,16 +252,82 @@ player loadSave(int Num){
             potions = strtol(twoDigitsHolder, &endptr, 10);
 
             player playerToLoad = {life, money, items, CompletedMissions, mission_selector, mission_selector_range, potions, palude, magione, grotta, armor, sword, heroSword, CastleKey};
+            fclose(ppFile);
             return playerToLoad;
         }
     }
-
     fclose(ppFile);
-
+    player failed_load = {20, 0, 0, 0, 6, 7, 0, false, false, false, false, false, false, false};
+    return failed_load;
     // Estrapolazione delle statistiche
     // DEBUG
     //printf("\n%s\n", *SaveStat);
     // DEBUG
+}
+
+void Cheats(int Num, int life, int money){
+
+    //char s_life[3];
+    //char s_money[4];
+
+    //sprintf(s_life, "%02d", life);
+    //sprintf(s_money, "%03d", money);
+
+    char SaveStats[BUF];
+    char Time[24];
+
+    FILE *cpFile = fopen("savefile_copy.txt", "w");
+    if (cpFile == NULL){
+        perror("Error opening file!");
+    }
+
+    FILE *ppFile = fopen("savefile.txt", "r");
+    if (ppFile == NULL){
+        perror("Error opening file!");
+    }
+
+    char data[BUFF];
+    while(fgets(data, BUFF, ppFile) != NULL){
+        char *endptr;
+        int Index = strtol(data, &endptr, 10);
+
+        if(Index != Num){
+            fprintf(cpFile, "%s", data);
+        }
+        else if(Num == Index){
+            for(int i = 0; i < 23; i++){
+                Time[i] = data[i];
+            }
+            //printf("\n%s\n", Time);
+
+            player toModify = loadSave(Num);
+            toModify.life = life;
+            toModify.money = money;
+
+            snprintf(SaveStats, BUF, ", %02d P . VITA , %03d MONETE , %02d OGGETTI , %01d MISSIONI COMPLETATE %d%d%d%d%d%d%d%d%d \n", toModify.life, toModify.money, toModify.items, toModify.CompletedMissions, toModify.palude, toModify.magione, toModify.grotta, toModify.CastleKey, toModify.armor, toModify.sword, toModify.heroSword, toModify.mission_selector, toModify.potions);
+            fprintf(cpFile, "%s%s", Time, SaveStats);
+        }
+    }
+
+    fclose(ppFile);
+    fclose(cpFile);
+
+    FILE *_ppFile = fopen("savefile.txt", "w");
+    if (_ppFile == NULL){
+        perror("Error opening file!");
+    }
+    FILE *_cpFile = fopen("savefile_copy.txt", "r");
+    if (_cpFile == NULL){
+        perror("Error opening file!");
+    }
+    
+    while(fgets(data, BUFF, _cpFile) != NULL){
+        fprintf(_ppFile, "%s", data);
+    }
+
+    fclose(_ppFile);
+    fclose(_cpFile);
+    remove("savefile_copy.txt");
 }
 
 int count_lines(){

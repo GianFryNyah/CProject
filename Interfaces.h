@@ -102,6 +102,8 @@ void menu(int CheatMode){
                 //clear();
                 int buf_size = 8;
                 SaveIndex = InputHandlerInt(buf_size);
+                player player01 = loadSave(SaveIndex);
+
                 printf("\nSeleziona un'opzione per il salvataggio %d: ", SaveIndex);
                 printf("\n  1. Carica\n  2. Elimina\n");
                 printf("\nSeleziona opzione [1-2]: ");
@@ -111,25 +113,25 @@ void menu(int CheatMode){
                     case 1:
                         //load save stats
                         //printf("\nLoading...");
-                        player MasterChief = loadSave(SaveIndex);
+                        //player player01 = loadSave(SaveIndex);
 
                         // DEBUG // DEBUG // DEBUG
                         // DEBUG // DEBUG // DEBUG
-                        printf("\n%d Punti Vita, ", MasterChief.life);
-                        printf("%d Monete, ", MasterChief.money);
-                        printf("%d Oggetti, ", MasterChief.items);
-                        printf("%d Missioni completate, ", MasterChief.CompletedMissions);
-                        printf("Missione Palude: %s , ", (MasterChief.palude) ? "Completata" : "Non completata");
-                        printf("Missione Magione: %s , ", (MasterChief.magione) ? "Completata" : "Non completata");
-                        printf("Missione Grotta: %s", (MasterChief.grotta) ? "Completata\n" : "Non completata\n");
-                        printf("Ha l'armatura?: %s , ", (MasterChief.armor) ? "Si'" : "No");
-                        printf("Ha la Spada?: %s , ", (MasterChief.sword) ? "Si'" : "No");
-                        printf("Ha la Spada dell'Eroe?: %s , ", (MasterChief.heroSword) ? "Si'" : "No");
-                        printf("Numero Pozioni: %d\n", MasterChief.potions);
+                        printf("\n%d Punti Vita, ", player01.life);
+                        printf("%d Monete, ", player01.money);
+                        printf("%d Oggetti, ", player01.items);
+                        printf("%d Missioni completate, ", player01.CompletedMissions);
+                        printf("Missione Palude: %s , ", (player01.palude) ? "Completata" : "Non completata");
+                        printf("Missione Magione: %s , ", (player01.magione) ? "Completata" : "Non completata");
+                        printf("Missione Grotta: %s", (player01.grotta) ? "Completata\n" : "Non completata\n");
+                        printf("Ha l'armatura?: %s , ", (player01.armor) ? "Si'" : "No");
+                        printf("Ha la Spada?: %s , ", (player01.sword) ? "Si'" : "No");
+                        printf("Ha la Spada dell'Eroe?: %s , ", (player01.heroSword) ? "Si'" : "No");
+                        printf("Numero Pozioni: %d\n", player01.potions);
                         // DEBUG // DEBUG // DEBUG
                         // DEBUG // DEBUG // DEBUG
 
-                        game(MasterChief, CheatMode);
+                        game(player01, CheatMode);
                         //here ask for additional enter, to fix ( maybe ?)
                         break;
                     case 2:
@@ -151,9 +153,19 @@ void menu(int CheatMode){
                 //trucchi
                 //accessibile con Konami's code
                 //Use cheats
+                clear();
                 if (CheatMode == 2){
-                    printf("You're welcome, dirty cheater!\n");
-                    clear();
+                    int Num = 0;
+                    newShowSaves();
+                    printf("\nSeleziona un salvataggio: ");
+                    Num = InputHandlerInt(8);
+                    int life = 0; int money = 0;
+                    printf("Nuovi Punti Vita: ");
+                    life = InputHandlerInt(8);
+                    printf("Nuovo saldo Monete: ");
+                    money = InputHandlerInt(8);
+                    Cheats(Num, life, money);
+                    printf("\nSalvataggio modificato con successo!\n");
                     menu(CheatMode);
                 }
                 break;
@@ -191,6 +203,8 @@ void game(player player01, int CheatMode){
         int choice_villaggio = 0;
         int choice_missione = 0;
         int buf_size = 2;
+        char SaveStats[BUF];
+
         choice_villaggio = InputHandlerInt(buf_size);
         switch (choice_villaggio) { // Implementazione logica del menu di selezione missione
             case 1: //intraprendi una missione, si apre il menu di scelta missione
@@ -206,13 +220,11 @@ void game(player player01, int CheatMode){
                                 printf("\nBenvenuto nella palude putrescente!\n");
 
                                 //INIZIO MISSIONE
-                                int* Pdungeon_rooms = malloc(10);
+                                int Pdungeon_rooms[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
                                 int* RoomPointer;
                                 palude_putrescente(&player01, Pdungeon_rooms, RoomPointer, CheatMode);
                                 player01.palude = true;
-                                // deallocazione memoria
-                                free(Pdungeon_rooms);
-                                Pdungeon_rooms = NULL;
+                                player01.CompletedMissions += 1;
 
                                 if(mission_selector == 6 || mission_selector == 11){
                                     player01.mission_selector += 1;
@@ -306,7 +318,6 @@ void game(player player01, int CheatMode){
             case 3: //implementa inventario
                 break;
             case 4: //implementa salvataggio
-                char SaveStats[BUF];
                 //DEBUG
                 //player01.life = 17;
                 //player01.money = 72;
@@ -371,7 +382,7 @@ void combattimento(player *player01, foe tipo_nemico, int CheatMode){
             //printf("%s infligge %d danni all'eroe! L'eroe rimane con %d punti vita.", tipo_nemico.nome_nemico, tipo_nemico.danno_nemico, player01->life);
                         
             if (player01->life <= 0) {
-                printf("L'eroe e' stato sconfitto!\n");              
+                printf("L'eroe e' stato sconfitto!\n");         
                 clear();
                 menu(CheatMode);
             }
@@ -520,6 +531,14 @@ void palude_putrescente(player* player01, int* dungeon_rooms, int* RoomPointer, 
         int choice_negozio = 0;
         int beneficio_pozione = 0;
         int buf_size = 2;
+        int room = 0;
+
+        foe cane_selvaggio = {"Cane Selvaggio", 2, 1, 0};
+        foe goblin = {"Goblin", 3, 2, 2};
+        foe scheletro = {"Scheletro", 4, 2, 4};
+        foe orco = {"Orco", 3, 4, 6};
+        foe accquitrino = {"Acquitrino Velenoso", 0, 0, 0};
+        foe generale_orco = {"Generale Orco", 6, 3, 12};
 
         // prompt scelta da selezionare, da ripetersi fino ad input valido
         Text(21); // scelta tra 1 e 4 compresi
@@ -527,47 +546,41 @@ void palude_putrescente(player* player01, int* dungeon_rooms, int* RoomPointer, 
 
         switch(choice_palude){
             case 1:
-                int room = *RoomPointer;
+                room = *RoomPointer;
 
                 switch(room){
                     case 1:
-                        foe cane_selvaggio = {"Cane Selvaggio", 2, 1, 0};
                         combattimento(player01, cane_selvaggio, CheatMode);
                         break;
                     case 2:
-                        foe goblin = {"Goblin", 3, 2, 2};
                         combattimento(player01, goblin, CheatMode);
                         break;
                     case 3:
-                        foe scheletro = {"Scheletro", 4, 2, 4};
                         combattimento(player01, scheletro, CheatMode);
                         break;
                     case 4:
-                        foe orco = {"Orco", 3, 4, 6};
                         combattimento(player01, orco, CheatMode);
                         break;
                     case 5:
                         // stanza trappola
                         // il danno e' compreso tra 1 e 6 ed e' stabilito dal tiro del dado
-                        foe accquitrino = {"Acquitrino Velenoso", 0, 0, 0};
                         combattimento(player01, accquitrino, CheatMode);
                         break;
                     case 6:
                         // requisito per superare la missione: sconfiggerne tre
 
                         if(player01->sword){
-                            foe generale_orco = {"Generale Orco", 5, 3, 12};
+                            generale_orco.colpo_fatale = 5;
                             combattimento(player01, generale_orco, CheatMode);
                             objective++;
                         }
                         else{
-                            foe generale_orco = {"Generale Orco", 6, 3, 12};
                             combattimento(player01, generale_orco, CheatMode);
                             objective++;
-                    }
-
-                    break;
+                        }
+                        break;
                 }
+                
                 printf("\n\nNumero di generali aaaa: %d\n\n", objective);
                 RoomPointer++;
                 break;
