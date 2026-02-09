@@ -298,6 +298,7 @@ void Cheats(int Num, int life, int money){
             for(int i = 0; i < 23; i++){
                 Time[i] = data[i];
             }
+            Time[23] = '\0';
             //printf("\n%s\n", Time);
 
             player toModify = loadSave(Num);
