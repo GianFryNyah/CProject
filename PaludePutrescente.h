@@ -150,6 +150,7 @@ bool palude_putrescente(player* player01, int* dungeon_rooms, int* RoomPointer) 
                 }
                 else{
                     // testo che ricorda che il giocatore non ha abbastanza monete
+                    clear();
                     Text(50);
                 }
                 break;

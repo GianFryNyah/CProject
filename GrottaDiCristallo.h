@@ -137,9 +137,9 @@ bool grotta_di_cristallo(player* player01, int* dungeon_rooms, int* RoomPointer)
                 }
                 else{
                     // testo che ricorda che il giocatore non ha abbastanza monete
+                    clear();
                     Text(50);
                 }
-                clear();
                 break;
             default:
                 clear();
