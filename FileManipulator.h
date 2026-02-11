@@ -6,24 +6,23 @@
 #include "struct.h"
 #define BUFF 4096
 #define BUF 128
+// Questo header contiene meotodi responsabili della manipolazione dei file di testo
+// Supporta il salvataggio di tutte le statistiche di una partita, il caricamento di un salvataggio pre esistente,
+// la modifica di alcune statistiche di un salvataggio e l'eliminazione di un salvataggio
+// Il salvataggio e' una stringa dove le statistiche sono rappresentati da valori estrapolati da una struct player
+// La struct player in questione e' descritta presso l'header struct.h
+// Il formato della stringa e' " 1. xx-xx-xxxx xx:xx:xx, xx P . VITA , xxx MONETE , xx OGGETTI , x MISSIONI COMPLETATE xxxxxxxxxx"
+// La stringa e' appositamente formattata in modo da non variare mai la propria dimensione
+// Vita massima possibile con trucchi: 99 - Senza trucchi: 20
+// Monete massime possibili: 999
+// I salvataggi sono gestiti mediante scrittura su file di testo con estensione .txt
 
+// Questa funzione conta quante linee sono presenti nel file savefile.txt
+// Va a contare le occorrenze del carattere \n e ritorna un intero pari al numero di occorrenze
+// Questo metodo e' usato solo dai metodi contenuti in questo header come supporto
 int count_lines(); //Used by addSave(char* string); It return the number of lines (counting \n) of a text file
 
-/*void ShowSaves(){ // Obsoleta DA RIMUOVERE ma NON ADESSO
-    FILE *pFile = fopen("savefile.txt", "r");
-    
-    char data[BUFF];
-    if(pFile == NULL){
-        printf("Error opening file!");
-    }
-
-    while(fgets(data, BUFF, pFile) != NULL){
-        printf("\t%s", data);
-    }
-    fclose(pFile);
-    printf("\n");
-}*/
-
+// Mostra in output su terminale la lista dei salvataggi con una formattazione che nasconda le statistiche che non devono essere mostrate
 void newShowSaves(){
     FILE *cpFile = fopen("savefile_copy.txt", "w");
     if (cpFile == NULL){
@@ -63,8 +62,10 @@ void newShowSaves(){
     remove("savefile_copy.txt");
 }
 
+// Aggiunge un salvataggio al file savefile.txt se esiste ALTRIMENTI crea un nuovo file savefile.txt e gli aggiunge il salvataggio
+// Il nuovo salvataggio viene sempre agganciato come ultimo salvataggio ( se esistono tre salvataggi, addSave(char* s) lo aggiungera' come quarto salvataggio )
 void addSave(char* SaveStats){//It appends a save stat, given a string type with player stats (this function do the indexing job)
-    //TIMESTAMP FOR NEW SAVE
+    // TIMESTAMP PER NUOVI SALVATAGGI
     time_t rawtime;
     struct tm * timeinfo;
     char formatted_date[50];
@@ -73,7 +74,7 @@ void addSave(char* SaveStats){//It appends a save stat, given a string type with
     timeinfo = localtime(&rawtime);
     strftime(formatted_date, sizeof(formatted_date), "%d-%m-%Y %T", timeinfo);
 
-    //OPENING TEXT FILE FOR ADDING A SAVE
+    // APERTURA FILE DI TESTO PER AGGIUNTA DI UN SALVATAGGIO
     FILE *pFile = fopen("savefile.txt", "a");
     if (pFile == NULL){
         perror("Error opening file!");
@@ -81,12 +82,12 @@ void addSave(char* SaveStats){//It appends a save stat, given a string type with
     int nlines = count_lines();
     fprintf(pFile, "%2d. %s%s", nlines, formatted_date, SaveStats);
     fclose(pFile);
-    //printf("%s%sThere's %d saves on the file\n", formatted_date, SaveStats, nlines); //debug
 }
 
-void deleteSave(int Num){//Remove a certain save stat given his index, passed as an int type
-    //IT DELETS ONE SPECIFIED SAVE BY PASSING IS INDEX NUMBER
-    //IT THEN RE-SORT SAVE FILE INDEXING
+// Questa funzione elimina un salvataggio al file savefile.txt se questo esiste e se il salvataggio viene trovato
+void deleteSave(int Num){
+    // ELIMINA UNO SPECIFICO SALVATAGGIO PASSANDONE IL SUO INDICE ALLA FUNZIONE
+    // ELIMINATO IL SALVATAGGIO CORRISPONDENTE, RIDEFINISCE IL VALORE INDICE PER OGNI SALVATAGGIO
     FILE *cpFile = fopen("savefile_copy.txt", "w");
     if (cpFile == NULL){
         perror("Error opening file!");
@@ -126,7 +127,6 @@ void deleteSave(int Num){//Remove a certain save stat given his index, passed as
         }
     }
     fclose(ppFile);
-    //Insert here re-indexing
     fclose(cpFile);
     FILE *_ppFile = fopen("savefile.txt", "w");
     if (_ppFile == NULL){
@@ -146,10 +146,10 @@ void deleteSave(int Num){//Remove a certain save stat given his index, passed as
     remove("savefile_copy.txt");
 }
 
+// Questa funzione si occupa del caricamento di un salvataggio mediante passaggio di un int Num che rappresenta l'indice del salvataggio da caricare
+// Se il salvataggio si trova, torna un tipo player con i valori di nostro interesse
+// Altrimenti gestisce l'errore e fa iniziare una nuova partita
 player loadSave(int Num){
-    // Conad, persone oltre le cose!
-    //IT DELETS ONE SPECIFIED SAVE BY PASSING IS INDEX NUMBER
-    //IT THEN RE-SORT SAVE FILE INDEXING
     FILE *ppFile = fopen("savefile.txt", "r");
     if (ppFile == NULL){
         perror("Error opening file!");
@@ -163,14 +163,14 @@ player loadSave(int Num){
             continue;
         }
         else if(Num == Index){
-            // Qua al posto del debug vanno estrapolati i dati che serviranno dopo a inizializzare la struct player
-            // verosimilmente rendermo questa funzione di tipo player, ci deve tornare un player settato per come vogliamo\
-            // implementeremo una funzione molto simile per la modifiche del salvataggio tramite konami code
+            // Dentro questo if vengono estrapolati i dati che servono ad inizializzare la struct player
+            // Tornera' un tipo Player con i valori desiderati
 
             int life; int money; int items; int CompletedMissions; bool palude; bool magione; bool grotta; bool armor; bool sword; bool heroSword; int potions;
             bool CastleKey; int mission_selector; int mission_selector_range = 7;
 
-            // coordinates: 24-25 ; 38-40 ; 51-52 ; 64 ; 86 ; 87 ; 88 ; 90 ; 91 ; 92 ; 94 ; ? 95 ? ( se potions > 9 )
+            // coordinate vari attributi per gestione salvataggi, in ordine di comparsa nella struct:
+            // 25-26 ; 39-41 ; 52-53 ; 65 ; 87 ; 88 ; 89 ; 90 ; 91 ; 92 ; 93 ; 94 ; 95-96 ( se potions > 9 )
             char oneDigitsHolder[2] = "\0"; char twoDigitsHolder[3] = "\0"; char threeDigitsHolder[4] = "\0";
 
             // LIFE EXTRAPOLATION
@@ -219,7 +219,7 @@ player loadSave(int Num){
             if(num == 1){ grotta = true;}
             else{grotta = false;}
 
-            oneDigitsHolder[0] = data[89];
+            oneDigitsHolder[0] = data[90];///
             num = strtol(oneDigitsHolder, &endptr, 10);
             if(num == 1){ CastleKey = true;}
             else{CastleKey = false;}
@@ -257,22 +257,18 @@ player loadSave(int Num){
         }
     }
     fclose(ppFile);
+
+    // a questo punto del codice, non si e' riusciti a trovare il salvataggio selezionato
+    // mostra l'errore al giocatore ed inizializza il tipo player da tornare con valori di default
+    printf("\nErrore nel caricamento! Verra' avviata una Nuova Partita\n");
     player failed_load = {20, 0, 0, 0, 6, 7, 0, false, false, false, false, false, false, false};
     return failed_load;
-    // Estrapolazione delle statistiche
-    // DEBUG
-    //printf("\n%s\n", *SaveStat);
-    // DEBUG
 }
 
-void Cheats(int Num, int life, int money){
-
-    //char s_life[3];
-    //char s_money[4];
-
-    //sprintf(s_life, "%02d", life);
-    //sprintf(s_money, "%03d", money);
-
+// Permette la modifica delle statistiche di un salvataggio individuato tramite indice per mezzo del passaggio di un int Num
+// Il bool permette di scegliere se sbloccare o meno la missione contro il Signore Oscuro
+// invoca loadSave(int Num) per estrapolare le statistiche del salvataggio da dover modificare
+void Cheats(int Num, int life, int money, bool missione_finale){
     char SaveStats[BUF];
     char Time[24];
 
@@ -299,11 +295,18 @@ void Cheats(int Num, int life, int money){
                 Time[i] = data[i];
             }
             Time[23] = '\0';
-            //printf("\n%s\n", Time);
 
             player toModify = loadSave(Num);
             toModify.life = life;
             toModify.money = money;
+
+            if(missione_finale){
+                toModify.palude = true;
+                toModify.magione = true;
+                toModify.grotta = true;
+                toModify.CastleKey = true;
+                toModify.CompletedMissions = 3;
+            }
 
             snprintf(SaveStats, BUF, ", %02d P . VITA , %03d MONETE , %02d OGGETTI , %01d MISSIONI COMPLETATE %d%d%d%d%d%d%d%d%d \n", toModify.life, toModify.money, toModify.items, toModify.CompletedMissions, toModify.palude, toModify.magione, toModify.grotta, toModify.CastleKey, toModify.armor, toModify.sword, toModify.heroSword, toModify.mission_selector, toModify.potions);
             fprintf(cpFile, "%s%s", Time, SaveStats);
@@ -332,7 +335,6 @@ void Cheats(int Num, int life, int money){
 }
 
 int count_lines(){
-    //DA STUDIARE MEGLIO
     FILE* pFile;
     pFile = fopen("savefile.txt", "rb");
     if (pFile == NULL){

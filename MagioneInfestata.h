@@ -2,8 +2,15 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+// Questo header contiene la funzione responsabile dell'esecuzione della missione Magione Infestata
+// Prende come parametro un puntatore al tipo player, un puntatore ad un array gia' inizializzato ed un puntatore ad un intero
+// l'array dungeon_rooms contiene dieci interi che rappresentano il nemico
+// RoomPointer viene fatto puntare al primo elemento di dungeon_rooms
+// Per ogni stanza esplorata con successo RoomPointer puntera' alla prossima stanza
+// La funzione della missione si appoggia ad appositi metodi per la gestione di eventi, trappole e combattimento
+// essi sono presenti presso l'header InterfaceMethod.h che e' incluso presso Interfaces.h
+// questo header e' incluso presso Interfaces.h e la funzione missione e sempre li' invocata
 bool magione_infestata(player* player01, int* dungeon_rooms, int* RoomPointer) {
-    // template Menu' di Missione
     bool exitDoWhile = false;
 
     // variabili di supporto per funzionalita' MENU'
@@ -14,7 +21,6 @@ bool magione_infestata(player* player01, int* dungeon_rooms, int* RoomPointer) {
     int buf_size = 2;
     bool VampiroKill = false;
 
-    srand(time(NULL));
     Text(40);
     Text(35); if(VampiroKill){printf("\nStato di avanzamento : Vampiro Superiore sconfitto!");}
     else if(player01->CastleKey){printf("\nStato di avanzamento : Chiave del Castello del Signore Oscuro ottenuta!");}
@@ -27,6 +33,9 @@ bool magione_infestata(player* player01, int* dungeon_rooms, int* RoomPointer) {
     // do-while nel quale si svolgera' la missione, termina solo quando la missione deve finire ( Superamento Missione, ritorno al Menu' del Villaggio, Game Over )
     do{
         // scope interno DO-WHILE
+
+        // inizializzo tutti i tipi foe ciascuno per ogni possibile nemico
+        // sara' passato insieme al tipo player alla funzione combattimento(player* x, foe y)
         foe pipistrello = {"Pipistrello", 2, 2, 1};
         foe zombie = {"Zombie", 3, 2, 2};
         foe fantasma = {"Fantasma", 5, 2, 4};
@@ -39,45 +48,53 @@ bool magione_infestata(player* player01, int* dungeon_rooms, int* RoomPointer) {
 
         // Implementazione logica del Menu' di Missione
         switch(choice_magione){
+        // ESPLORAZIONE STANZA DEL DUNGEON
             case 1:
                 room = *RoomPointer;
 
                 switch(room){
                     case 1:
                         // stanza trappola
-                        // il danno e' 3
                         BotolaBuiaEvent(player01);
                         // in questo if controllo se il player ha vita maggiore o minore-uguale a zero
                         if(player01->life <= 0){
                             // game over
                             return false;
                         }
+                        clear();
                         break;
                     case 2:
+                        // si incontra un nemico, chiamo la funzione combattimento che gestisce le dinamiche di combattimento
                         combattimento(player01, pipistrello);
                         // in questo if controllo se il player ha vita maggiore o minore-uguale a zero
                         if(player01->life <= 0){
                             // game over
                             return false;
                         }
+                        clear();
                         break;
                     case 3:
+                        // si incontra un nemico, chiamo la funzione combattimento che gestisce le dinamiche di combattimento
                         combattimento(player01, zombie);
                         // in questo if controllo se il player ha vita maggiore o minore-uguale a zero
                         if(player01->life <= 0){
                             // game over
                             return false;
                         }
+                        clear();
                         break;
                     case 4:
+                        // si incontra un nemico, chiamo la funzione combattimento che gestisce le dinamiche di combattimento
                         combattimento(player01, fantasma);
                         // in questo if controllo se il player ha vita maggiore o minore-uguale a zero
                         if(player01->life <= 0){
                             // game over
                             return false;
                         }
+                        clear();
                         break;
                     case 5:
+                        // si incontra un nemico, chiamo la funzione combattimento che gestisce le dinamiche di combattimento
                         combattimento(player01, vampiro);
                         // in questo if controllo se il player ha vita maggiore o minore-uguale a zero
                         if(player01->life <= 0){
@@ -87,9 +104,10 @@ bool magione_infestata(player* player01, int* dungeon_rooms, int* RoomPointer) {
                         else{
                             VampiroKill = true;
                         }
+                        clear();
                         break;
                     case 6:
-                        // requisito per superare la missione: sconfiggerne tre
+                        // si incontra un nemico, chiamo la funzione combattimento che gestisce le dinamiche di combattimento
                         combattimento(player01, demone);
                         // in questo if controllo se il player ha vita maggiore o minore-uguale a zero
                         if(player01->life <= 0){
@@ -100,34 +118,28 @@ bool magione_infestata(player* player01, int* dungeon_rooms, int* RoomPointer) {
                             // sconfiggendo il demone ottieni la chiave del Castello
                             player01->CastleKey = true;
                         }
+                        clear();
                         break;
                 }
-                // DEBUG
                 Text(60);
                 RoomPointer++;
                 printf("");
                 break;
             case 2:
-                // Negozio
+            // NEGOZIO
                 clear();
                 negozio(player01, MenuNegozio, choiceMenuNegozio, buf_size);
-                //clear();
                 break;
             case 3:
-                // Inventario
+            // INVENTARIO
                 clear();
                 inventario(player01, buf_size);
                 break;
             case 4:
-                // DEBUG DEBUG DEBUG DEBUG
-                player01->money = 50;
-                // DEBUG DEBUG DEBUG DEBUG
                 // struttura che controlla che il giocatore intenzionato a tornare al menu' del villaggio abbia le monete minime necessaria
                 if(player01->money >= 50){
                     player01->money -= 50;
                     clear();
-                    // il giocatore viene riportato al menu' del villaggio richiamando game
-                    // il gioco si comportera' correttamente come se la missione non fosse stata completata
                     return true;
                 }
                 else{
@@ -135,6 +147,7 @@ bool magione_infestata(player* player01, int* dungeon_rooms, int* RoomPointer) {
                     Text(50);
                 }
                 break;
+                clear();
             default:
                 clear();
                 break;
@@ -154,7 +167,7 @@ bool magione_infestata(player* player01, int* dungeon_rooms, int* RoomPointer) {
             else{printf("\nStato di avanzamento : Nessun progresso");}
             Text(20);
         }
-        //clear();
+
     } while(!exitDoWhile);
     return true;
 }

@@ -1,13 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include <unistd.h>
 
+// Questo header contiene funzioni di base per il corretto funzionamento di quando si svolge dentro le funzioni di Interfaces.h e le funzioni di missione
+
+// Ripulisce il buffer
 void clear(void)
 {
     while ( getchar() != '\n' );
 }
 
+// passato un intero int buf_size che quantifichi la dimensione da allocare, inizializza una variabile char text[buf_size] tramite fgets()
+// dopodiche', ritorna un intero in base decimale estratto da text tramite funzione strtol(text, &endptr, 10)
 int InputHandlerInt(int buf_size){
     char *endptr;
     char buff[buf_size];
@@ -15,6 +21,10 @@ int InputHandlerInt(int buf_size){
     return strtol(buff, &endptr, 10);
 }
 
+// contiene uno switch, ogni case corrisponde ad un intero che mostra in output su terminale il corrispondente prompt testuale
+// impiegato per la visualizzazione dinamica di un determinato menu' a seconda delle condizioni
+// permette un notevole snellimento del codice presso ogni metodo del progetto
+// permette una modifica semplice di poche occorrenze ripetute frequentemente nel progetto
 void Text(int code){
     switch (code){
         // OPZIONI MENU' PRINCIPALE
@@ -29,10 +39,10 @@ void Text(int code){
             printf("\n  1. Nuova Partita\n  2. Carica Salvataggio\n  3. Trucchi\n");
             break;
         case 3:
-            printf("Seleziona una delle opzioni del Menu Principale [1-2]: ");
+            printf("Seleziona una delle opzioni del Menu Principale [1-2] o selezione 4 per uscire dal gioco: ");
             break;
         case 4:
-            printf("Seleziona una delle opzioni del Menu Principale [1-3]: ");
+            printf("Seleziona una delle opzioni del Menu Principale [1-3] o selezione 4 per uscire dal gioco: ");
             break;
         case 5:
             Text(60);
@@ -210,6 +220,16 @@ void Text(int code){
             printf("\n\t***MISSIONE COMPLETATA***\n");
             printf("\nL'Eroe ha sconfitto Il Vampiro Custode e ottenuto la Chiave del Castello del Signore Oscuro\nla Missione e' stata portata a termine!");
             break;
+        case 44:
+            printf("\nObiettivo :  Recupera la Spada dell'Eroe");
+            break;
+        case 45:
+            printf("\nL'attacco dell'eroe aumenta di due punti grazie alla Spada dell'Eroe!\n");
+            break;
+        case 46:
+            printf("\n\t***MISSIONE COMPLETATA***\n");
+            printf("\nL'Eroe ha sconfitto il Drago Antico e ottenuto la Spada dell'Eroe\nla Missione e' stata portata a termine!");
+            break;
         // FINE PROMPT MISSIONI
 
         case 50:
@@ -242,9 +262,22 @@ void Text(int code){
             break;
         case 64:
             break;
+        case 99: // M
+            Text(60);
+            printf("\nMenu di Selezione Missione:\n");
+            printf("\n  1. Castello del Signore Oscuro\n");
+            break;
+        case 106:
+            printf("Seleziona una delle opzioni [1]: ");
+            break;
     }
 }
 
+// INIZIO GENERATORI DI STANZE DUNGEONS
+
+// inizializza l'array dungeon_rooms[10], passato come argomento
+// per sicurezza tutti i valori dell'array sono pari a 0
+// ogni valore corrisponde ad un intero ed ogni intero corrisponde al relativo nemico/stanza/trappola/evento
 void rooms_generator_palude(int* dungeon_rooms){
     //srand(time(NULL));
     int cnt = 0;
@@ -286,21 +319,29 @@ void rooms_generator_palude(int* dungeon_rooms){
     
     return;
 }
-
+// inizializza l'array dungeon_rooms[10], passato come argomento
+// per sicurezza tutti i valori dell'array sono pari a 0
+// ogni valore corrisponde ad un intero ed ogni intero corrisponde al relativo nemico/stanza/trappola/evento
 void rooms_generator_magione(int* dungeon_rooms){
     //srand(time(NULL));
     int vampiro = 0;
     int demone = 0;
     int entropy;
 
+    entropy = DiceThrow();
+
     for(int i = 0; i < 8; i++){
+        entropy = DiceThrow();
         dungeon_rooms[i] = DiceThrow();
         if(dungeon_rooms[i] == 5){
             vampiro++;
+            entropy = DiceThrow();
         }
         else if(dungeon_rooms[i] == 5){
             demone++;
+            entropy = DiceThrow();
         }
+        entropy = DiceThrow();
     }
     if(vampiro == 0){
         dungeon_rooms[8] = 5;
@@ -308,10 +349,38 @@ void rooms_generator_magione(int* dungeon_rooms){
     if(demone == 0){
         dungeon_rooms[9] = 6;
     }
+
+    entropy = DiceThrow();
     
     return;
 }
+// inizializza l'array dungeon_rooms[10], passato come argomento
+// per sicurezza tutti i valori dell'array sono pari a 0
+// ogni valore corrisponde ad un intero ed ogni intero corrisponde al relativo nemico/stanza/trappola/evento
+void rooms_generator_grotta(int* dungeon_rooms){
+    int drago = 0;
+    int entropy;
 
+    entropy = DiceThrow();
+
+    for(int i = 0; i < 9; i++){
+        entropy = DiceThrow();
+        dungeon_rooms[i] = DiceThrow();
+        if(dungeon_rooms[i] == 6){
+            drago++;
+        }
+        entropy = DiceThrow();
+    }
+    if(drago == 0){
+        dungeon_rooms[9] = 6;
+    }
+    return;
+}
+// FINE GENERATORI DI STANZE DUNGEONS
+
+// Implementa le logiche di combattimento contro un nemico
+// prende come argomento un tipo player* x ( il giocatore ) ed un tipo foe y ( il nemico )
+// entrambi i tipi sono definiti presso l'header struct.h
 void combattimento(player *player01, foe tipo_nemico){
 
     Text(60);
@@ -320,9 +389,13 @@ void combattimento(player *player01, foe tipo_nemico){
     int dice_throw = DiceThrow();
     int attacco_eroe = dice_throw;
 
-    if(player01->sword){
-        attacco_eroe++;
+    if(player01->heroSword){
+        attacco_eroe += 2;
     }
+    else if(player01->sword){
+        attacco_eroe += 1;
+    }
+
     if(player01->armor){
         tipo_nemico.danno_nemico--;
     }
@@ -331,25 +404,30 @@ void combattimento(player *player01, foe tipo_nemico){
     while(attacco_eroe < tipo_nemico.colpo_fatale){
         Text(60); Text(38); // Viene lanciato un dado
         printf("Il risultato e': %d", dice_throw); sleep(1);
-        if(player01->sword){Text(36);}
+        if(player01->heroSword){Text(45);}
+        else if(player01->sword){Text(36);}
 
+        // attacco nemico
         Text(60);
         printf("Attacco non sufficiente per sconfiggere %s (%d < Colpo fatale = %d)\n", tipo_nemico.nome_nemico, attacco_eroe, tipo_nemico.colpo_fatale);
         player01->life -= tipo_nemico.danno_nemico;
-        if(player01->armor){Text(37);}
 
         Text(60);
         printf("%s infligge %d danni all'eroe! ", tipo_nemico.nome_nemico, tipo_nemico.danno_nemico); sleep(1);
+        if(player01->armor){Text(37);} sleep(1);
         printf("L'eroe rimane con %d punti vita.\n", (player01->life <= 0) ? 0 : player01->life); sleep(1);
                         
         if (player01->life <= 0) {
             Text(60);
             printf("\tL'eroe e' stato sconfitto!\n"); sleep(1);
+
             Text(60);
             printf("\n\t=== GAME OVER ===\n"); sleep(1);
             clear();
             return;
         }
+        // fine attacco nemico
+
         dice_throw = DiceThrow();
         attacco_eroe = dice_throw;
     }
@@ -365,6 +443,9 @@ void combattimento(player *player01, foe tipo_nemico){
     return;
 }
 
+// Implementa il Negozio sotto ogni aspetto, eccetto il tipo player* x le altre int sono inizializzate da valori const gia' noti e inizializzati dove serve
+// Tali const aiutano ad implementare le logiche di output su terminale di un certo Menu' di selezione del negozio mostrante certi items invece che altri
+// Gli items non vengono mostrati piu' una volta acquistati, eccetto gli item riacquistabili piu' volte
 void negozio(player* player01, int MenuNegozio, int choiceMenuNegozio, int buf_size){
     // non ho ne' la spada ne' l'armatura
     if(!(player01->sword) && !(player01->armor)){
@@ -525,6 +606,9 @@ void negozio(player* player01, int MenuNegozio, int choiceMenuNegozio, int buf_s
     return;
 }
 
+// Implementa l'Inventario sotto ogni aspetto, buf_size e' inzializzato da valore const e serve come dimensione del valore da inserire in input per compiere una scelta
+// permette di visualizzare le principali statische del giocatore e tutti gli item in suo possesso
+// permette di usare pozioni curative precedentemente acquistate
 void inventario(player* player01, int buf_size){
     Text(60);
     printf("\t\t\t|  STATISTICHE  GIOCATORE  |");
@@ -593,6 +677,7 @@ void inventario(player* player01, int buf_size){
     return;
 }
 
+// INIZIO METODI EVENTI SPECIALI STANZE/TRAPPOLE/FORZIERI
 void AcquitrinoVelenosoEvent(player* player01){
     int danno_nemico = DiceThrow();
     if(player01->armor){
@@ -605,39 +690,239 @@ void AcquitrinoVelenosoEvent(player* player01){
     printf("L'Eroe subisce %d danni!\n", danno_nemico); sleep(1);
     return;
 }
-
 void BotolaBuiaEvent(player* player01){
     int danno_nemico = 3;
     if(player01->armor){
         danno_nemico--;
     }
     Text(60);
-    printf("L'Eroe cade in un Acquitrino Velenoso!\n"); sleep(1);
+    printf("L'Eroe cade in una Botola Buia!\n"); sleep(1);
     player01->life -= danno_nemico;
     Text(60);
     printf("L'Eroe subisce %d danni!\n", danno_nemico); sleep(1);
     return;
 }
+void StanzaVuotaEvent(player* player01){
+    Text(60);
+    printf("L'Eroe entra in una Stanza Vuota!\n"); sleep(1);
+    printf("Non succede nulla.\n"); sleep(1);
+    Text(60);
+    return;
+}
+void CristalliCadentiEvent(player* player01){
+    int danno_nemico = 2;
+    if(player01->armor){
+        danno_nemico--;
+    }
+    Text(60);
+    printf("L'Eroe entra in una stanza con Cristalli Cadenti.\n");
+    player01->life -= danno_nemico;
+    Text(60);
+    printf("L'Eroe subisce %d danni!\n", danno_nemico); sleep(1);
+    return;
+}
+void PontePericolanteEvent(player* player01){
+    Text(60);
+    printf("L'Eroe entra in una stanza con un Ponte Pericolante\n"); sleep(1);
+    if(player01->money >= 3){
+        player01->money -= 3;
+        printf("L'Eroe perde 3 monete!\n");
+    }
+    else{
+        printf("L'Eroe perde %d monete!\n", player01->money);
+        player01->money = 0;
+    }
+    Text(60);
+    return;
+}
+void ForziereMisteriosoEvent(player* player01){
+    Text(60);
+    printf("L'Eroe entra in una stanza con un Forziere Misterioso\n"); sleep(1);
+    printf("Viene lanciata una moneta per stabilire il contenuto e gli effetti del Forziere:\n"); sleep(1);
+    int HeadOrTail = CoinThrow();
+    if(!HeadOrTail){
+        printf("Esce testa!\n"); sleep(1);
+        player01->money += 10;
+        printf("L'Eroe trova 10 monete nel Forziere!\n"); sleep(1);
+    }
+    else if(HeadOrTail){
+        printf("Esce croce!\n"); sleep(1);
+        int danno = 2;
+        if(player01->armor){--danno;}
+        player01->life -= danno;
+        printf("L'Eroe subisce %d danni!\n", danno); sleep(1);
 
-bool padovan(int num) { // stabilisce se un numero appartiene alla sequenza di padovan e restituisce un valore di verità
-    int seq_pad[500]; // questa funzione servirà per stabilire se un numero tra 1 e 500 appartiene alla sequenza, non sapendo quanti valori sono, riservo spazio per 500 interi
+    }
+    Text(60);
+    return;
+}
+void RupeScoscesaEvent(player* player01){
+    int danno_nemico = DiceThrow();
+    if(player01->armor){
+        danno_nemico--;
+    }
+    Text(60);
+    printf("L'Eroe cade in una Rupe Scoscesa!\n"); sleep(1);
+    player01->life -= danno_nemico;
+    Text(60);
+    printf("L'Eroe subisce %d danni!\n", danno_nemico); sleep(1);
+    return;
+}
+// FINE METODI EVENTI SPECIALI STANZE/TRAPPOLE/FORZIERI
+
+// Stabilisce se l'intero passatogli int num appartenga o meno alla sequenza di Padovan
+// E' stato usato un approcio iterativo per una migliore efficienza
+bool padovan(int num) {
+    int seq_pad[24]; // questa funzione servirà per stabilire se un numero tra 1 e 500 appartiene alla sequenza, non sapendo quanti valori sono, riservo spazio per 500 interi
     seq_pad[0] = 1; //assegno i primi 3 valori della sequenza
     seq_pad[1] = 1;
     seq_pad[2] = 1;
-    int contatore = 3; 
-    for (int i = 3 ; i < 500; i++) { // in questo ciclo genero la sequenza di Padovan dei numeri fino a 500
+
+    for (int i = 3 ; i < 24; i++) { // in questo ciclo genero la sequenza di Padovan dei numeri fino a 500
         int new_num = seq_pad[i-2] + seq_pad[i-3];
-        if (new_num > 500) break; // la sequenza mi serve fino al numero 500, quindi se lo supero esco dal ciclo e non genero ulteriori numeri
-        seq_pad[i] = new_num; 
-        contatore++; // tengo traccia di quanti numeri ho memorizzato
-    }
-    for (int i = 0; i < contatore; i++) { // controllo se il numero dato in input alla funzione è presente nella sequenza generata
+        //if (new_num > 500) break; // la sequenza mi serve fino al numero 500, quindi se lo supero esco dal ciclo e non genero ulteriori numeri
+        seq_pad[i] = new_num;
+        // CONTROLLO DURANTE LO SCORRIMENTO STESSO DELLA SERIE SE NUM APPARTIENE ALLA SERIE DI PADOVAN
         if (num == seq_pad[i]) {    
         //printf("Il numero %d appartiene alla sequenza di Padovan.\n", num); PER L'UTILIZZO CHE FAREMO DELLA FUNZIONE QUESTA STAMPA NON SERVE
         return true;
-        } 
+        }
+        //contatore++; // tengo traccia di quanti numeri ho memorizzato
     }
 // arrivo qui solamente se il numero non appartiene alla sequenza
 // printf("Il numero %d non appartiene alla sequenza di Padovan.\n", num); PER L'UTILIZZO CHE FAREMO DELLA FUNZIONE QUESTA STAMPA NON SERVE
     return false;
+}
+
+// VARIANTE SPECIALE di combattimento(player* x, foe y)
+// Implementa le logiche di combattimento contro il drago
+// prende come argomento un tipo player* x ( il giocatore ) ed un tipo foe y ( il nemico ) ( naturalmente vi sara' passato il nemico "Drago Antico" )
+// Include le logiche di attacco del Drago Antico, per cui in questa funzione viene invocata padovan(int num)
+// entrambi i tipi sono definiti presso l'header struct.h
+void combattimento_drago(player* player01, foe tipo_nemico){
+
+    Text(60);
+    printf("L'eroe incontra un %s e inizia il combattimento!\n", tipo_nemico.nome_nemico); sleep(1);
+    
+    // settaggio variabli di gioco ( valore tiro dado, inizializzazione attacco eroe )
+    int dice_throw = DiceThrow();
+    int attacco_eroe = dice_throw;
+
+    // settaggio parametri di combattimento ( attacco nemico, danno nemico )
+    if(player01->heroSword){
+        attacco_eroe += 2;
+    }
+    else if(player01->sword){
+        attacco_eroe += 1;
+    }
+
+    if(player01->armor){
+        tipo_nemico.danno_nemico--;
+    }
+
+    // ATTACCO NON SUFFICIENTE PER SCONFITTA AVVERSARIO ( Ciclo while finche' l'attacco non sara' sufficiente )
+    while(attacco_eroe < tipo_nemico.colpo_fatale){
+        Text(60); Text(38); // Viene lanciato un dado
+        printf("Il risultato e': %d", dice_throw); sleep(1);
+        if(player01->heroSword){Text(45);}
+        else if(player01->sword){Text(36);}
+
+        // attacco nemico
+        Text(60);
+        printf("Attacco non sufficiente per sconfiggere %s (%d < Colpo fatale = %d)\n", tipo_nemico.nome_nemico, attacco_eroe, tipo_nemico.colpo_fatale);
+        
+        // implementazione Attacco di Padovan
+        int danno = 10;
+        bool ValidAnswer = false;
+        bool IsInPadovan;
+        int num_casuale = randNum();
+        IsInPadovan = padovan(num_casuale);
+
+        do{
+            clear();
+            int answer = 0;
+            printf("Il Drago chiede all'Eroe: il numero %d appartiene alla sequenza di Padovan?\n", num_casuale);
+            printf("\n  1. Si\n  2. No\n");
+            printf("\nSeleziona opzione [1-2]: ");
+            answer = InputHandlerInt(2);
+
+            switch(answer){
+                case 1:
+                    clear();
+                    if(IsInPadovan){
+                        // risposta corretta - danno 0
+                        Text(60);
+                        printf("Risposta corretta!");
+                        printf("\nL'Eroe non subisce alcun danno!\n");
+                    }
+                    else{
+                        // risposta errata - danno 10
+                        Text(60);
+                        printf("Risposta errata!");
+                        if(player01->armor){--danno;}
+                        player01->life -= danno;
+                        
+                        Text(60);
+                        printf("%s infligge %d danni all'eroe! ", tipo_nemico.nome_nemico, tipo_nemico.danno_nemico); sleep(1);
+                        if(player01->armor){Text(37);} sleep(1);
+                        printf("L'eroe rimane con %d punti vita.\n", (player01->life <= 0) ? 0 : player01->life); sleep(1);
+                    }
+                    ValidAnswer = true;
+                    printf("");
+                    break;
+                case 2:
+                    clear();
+                    if(!IsInPadovan){
+                        // risposta corretta - danno 0
+                        Text(60);
+                        printf("Risposta corretta!");
+                        printf("\nL'Eroe non subisce alcun danno!\n");
+                    }
+                    else{
+                        // risposta errata - danno 10
+                        Text(60);
+                        printf("Risposta errata!");
+                        if(player01->armor){--danno;}
+                        player01->life -= danno;
+
+                        Text(60);
+                        printf("%s infligge %d danni all'eroe! ", tipo_nemico.nome_nemico, tipo_nemico.danno_nemico); sleep(1);
+                        if(player01->armor){Text(37);} sleep(1);
+                        printf("L'eroe rimane con %d punti vita.\n", (player01->life <= 0) ? 0 : player01->life); sleep(1);
+                    }
+                    ValidAnswer = true;
+                    printf("");
+                    break;
+                default:
+                    clear();
+                    printf("\nRisposta non valida!\n");
+                    break;
+            }
+            //clear();
+        }while(!ValidAnswer);
+                        
+        if (player01->life <= 0) {
+            Text(60);
+            printf("\tL'eroe e' stato sconfitto!\n"); sleep(1);
+
+            Text(60);
+            printf("\n\t=== GAME OVER ===\n"); sleep(1);
+            clear();
+            return;
+        }
+        // fine attacco nemico
+        
+        dice_throw = DiceThrow();
+        attacco_eroe = dice_throw;
+    }
+
+    // ATTACCO SUFFICIENTE PER SCONFITTA AVVERSARIO ( L'avversario sara' sconfitto, termina dopo l'esecuzione del codice )
+    Text(38); // viene lanciato un dado
+    printf("Il risultato e': %d", dice_throw); sleep(1);
+
+    Text(60);
+    printf("%s viene sconfitto (Attacco dell'Eroe: %d >= Colpo fatale = %d)", tipo_nemico.nome_nemico, attacco_eroe, tipo_nemico.colpo_fatale); sleep(1);
+    player01->money += tipo_nemico.monete_nemico;
+
+    return;
 }
