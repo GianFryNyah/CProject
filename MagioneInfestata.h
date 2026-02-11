@@ -15,17 +15,10 @@ bool magione_infestata(player* player01, int* dungeon_rooms, int* RoomPointer) {
     bool VampiroKill = false;
 
     srand(time(NULL));
-    printf("\nObiettivo :  Recupera la chiave del Castello del Signore Oscuro e sconfiggi un Vampiro Superiore");
-    if(VampiroKill){
-        printf("\nStato di avanzamento : Vampiro Superiore sconfitto!");
-    }
-    else if(player01->CastleKey){
-        printf("\nStato di avanzamento : Chiave del Castello del Signore Oscuro ottenuta!");
-    }
-    else{
-        printf("\nStato di avanzamento : Nessun progresso");
-    }
-    // if per vampiro ammazzato e/o chiave ottenuta
+    Text(40);
+    Text(35); if(VampiroKill){printf("\nStato di avanzamento : Vampiro Superiore sconfitto!");}
+    else if(player01->CastleKey){printf("\nStato di avanzamento : Chiave del Castello del Signore Oscuro ottenuta!");}
+    else{printf("\nStato di avanzamento : Nessun progresso");}
     Text(20);
     
     rooms_generator_magione(dungeon_rooms);
@@ -143,33 +136,25 @@ bool magione_infestata(player* player01, int* dungeon_rooms, int* RoomPointer) {
                 }
                 break;
             default:
+                clear();
                 break;
             // FINE SWITCH
         }
 
         if(VampiroKill && (player01->CastleKey)){
             clear();
-            printf("\nL'Eroe ha sconfitto Il Vampiro Custode e ottenuto la Chiave del Castello del Signore Oscuro\nla Missione e' stata portata a termine!"); sleep(1);
+            Text(43); sleep(1);
             exitDoWhile = true;
         }
     
         if(!exitDoWhile){
-            printf("\nObiettivo :  Recupera la chiave del Castello del Signore Oscuro e sconfiggi un Vampiro Superiore");
-            if(VampiroKill){
-                printf("\nStato di avanzamento : Vampiro Superiore sconfitto!");
-            }
-            else if(player01->CastleKey){
-                printf("\nStato di avanzamento : Chiave del Castello del Signore Oscuro ottenuta!");
-            }
-            else{
-                printf("\nStato di avanzamento : Nessun progresso");
-            }
+            Text(40);
+            Text(35); if(VampiroKill){printf("\nStato di avanzamento : Vampiro Superiore sconfitto!");}
+            else if(player01->CastleKey){printf("\nStato di avanzamento : Chiave del Castello del Signore Oscuro ottenuta!");}
+            else{printf("\nStato di avanzamento : Nessun progresso");}
             Text(20);
         }
-
         //clear();
-
     } while(!exitDoWhile);
-
     return true;
 }

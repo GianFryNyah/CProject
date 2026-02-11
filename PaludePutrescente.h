@@ -15,6 +15,7 @@ bool palude_putrescente(player* player01, int* dungeon_rooms, int* RoomPointer) 
     int objective = 0;
 
     srand(time(NULL));
+    Text(39);
     printf("\nObiettivo : Eliminare 3 Generale Orco");
     printf("\nStato di avanzamento : Eliminati %d su 3 Generale Orco", objective);
     Text(20);
@@ -140,17 +141,19 @@ bool palude_putrescente(player* player01, int* dungeon_rooms, int* RoomPointer) 
                 }
                 break;
             default:
+                clear();
                 break;
             // FINE SWITCH
         }
 
-        if(objective >= 1){
+        if(objective >= 3){
             clear();
-            printf("\nL'Eroe ha sconfitto l'ultimo dei tre Generali Orco, la Missione e' stata portata a termine!"); sleep(1);
+            Text(34); sleep(1);
             exitDoWhile = true;
         }
     
         if(!exitDoWhile){
+            Text(39);
             printf("\nObiettivo : Eliminare 3 Generale Orco");
             printf("\nStato di avanzamento : Eliminati %d su 3 Generale Orco", objective);
             Text(20);

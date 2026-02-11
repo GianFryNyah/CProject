@@ -17,7 +17,7 @@ int InputHandlerInt(int buf_size){
 
 void Text(int code){
     switch (code){
-        //MENU'
+        // OPZIONI MENU' PRINCIPALE
         case 1:
             Text(60);
             printf("\nMenu Principale:\n");
@@ -39,9 +39,9 @@ void Text(int code){
             printf("Menu del Villaggio:\n");
             printf("\n  1. Intraprendi una missione\n  2. Riposati\n  3. Inventario\n  4. Salva la partita\n  5. Esci\n");
             break;
-        //FINE MENU'
+        // FINE OPZIONI MENU' PRINCIPALE
         
-        //MENU' SCELTA MISSIONE
+        // MENU' SCELTA MISSIONE
         case 6: // P M G
             Text(60);
             printf("\nMenu di Selezione Missione:\n");
@@ -77,9 +77,9 @@ void Text(int code){
             printf("\nMenu di Selezione Missione:\n");
             printf("\n  1. Magione Infestata\n");
             break;
-        //FINE MENU' SCELTA MISSIONE
+        // FINE MENU' SCELTA MISSIONE
 
-        //OPZIONE MENU SCELTA MISSIONE
+        // OPZIONE MENU SCELTA MISSIONE
         case 13:
             printf("Seleziona una delle opzioni [1-3]: ");
             break;
@@ -101,7 +101,9 @@ void Text(int code){
         case 19:
             printf("Seleziona una delle opzioni [1]: ");
             break;
-        //FINE MENU' SCELTA MISSIONE
+        // FINE MENU' SCELTA MISSIONE
+
+        // MENU' DI MISSIONE, NEGOZIO ED INVENTARIO
         case 20:
             Text(60);
             printf("\nMenu di missione:\n");
@@ -115,26 +117,30 @@ void Text(int code){
             break;
         case 22:
             Text(60);
-            printf("\nNegozio:\n");
+            printf("\n\t\t\t|  N E G O Z I O  |");
+            printf("\nAcquista un oggetto:\n");
             printf("1. Pozione curativa\t| Prezzo per unita': 4\n");
             printf("2. Spada\t\t| Prezzo per unita': 5 ( Una sola unita' disponibile )\n");
             printf("3. Armatura\t\t| Prezzo per unita': 10 ( Una sola unita' disponibile )\n");
             printf("4. Esci dal Negozio\n");
             break;
         case 23:
-            printf("\nNegozio:\n");
+            printf("\n\t\t\t|  N E G O Z I O  |");
+            printf("\nAcquista un oggetto:\n");
             printf("1. Pozione curativa\t| Prezzo per unita': 4\n");
             printf("2. Armatura\t\t| Prezzo per unita': 10 ( Una sola unita' disponibile )\n");
             printf("3. Esci dal Negozio\n");
             break;
         case 24:
-            printf("\nNegozio:\n");
+            printf("\n\t\t\t|  N E G O Z I O  |");
+            printf("\nAcquista un oggetto:\n");
             printf("1. Pozione curativa\t| Prezzo per unita': 4\n");
             printf("2. Spada\t\t| Prezzo per unita': 5 ( Una sola unita' disponibile )\n");
             printf("3. Esci dal Negozio\n");
             break;
         case 25:
-            printf("\nNegozio:\n");
+            printf("\n\t\t\t|  N E G O Z I O  |");
+            printf("\nAcquista un oggetto:\n");
             printf("1. Pozione curativa\t| Prezzo per unita': 4\n");
             printf("2. Esci dal Negozio\n");
             break;
@@ -147,13 +153,65 @@ void Text(int code){
         case 28:
             printf("\nSeleziona una delle opzioni del Negozio [1-2]: ");
             break;
-        //EXIT
+        // FINE MENU' DI MISSIONE, NEGOZIO ED INVENTARIO
+
+        // OPZIONI SCELTE VARI MENU
         case 30:
             Text(60);
             printf("\nStai uscendo dal gioco, ricordati di salvare la partita per non perdere i tuoi progressi. Sei sicuro di voler procedere?\n");
             printf("\n  1. Si\n  2. No\n");
             printf("\nSeleziona un'opzione [1-2]: ");
             break;
+        case 31:
+            printf("\n  1. Carica\n  2. Elimina\n");
+            printf("\nSeleziona opzione [1-2]: ");
+            break;
+        case 32:
+            printf("Seleziona una delle opzioni del menu [1-5]: ");
+            break;
+        case 33:
+            Text(60);
+            printf("\nI tuoi punti vita sono stati ripristinati!\n");
+            printf("\n");
+            Text(5);
+            break;
+        // FINE OPZIONI SCELTE VARI MENU
+
+        // PROMPT MISSIONI
+        case 34:
+            printf("\n\t***MISSIONE COMPLETATA***\n");
+            printf("\nL'Eroe ha sconfitto l'ultimo dei tre Generali Orco, la Missione e' stata portata a termine!");
+            break;
+        case 35:
+            printf("\nObiettivo :  Recupera la chiave del Castello del Signore Oscuro e sconfiggi un Vampiro Superiore");
+            break;
+        case 36:
+            printf("\nL'attacco dell'eroe aumenta di un punto grazie alla spada!\n");
+            break;
+        case 37:
+            printf("\nIl danno inflitto dal nemico cala di un punto grazie all'armatura!\n");
+            break;
+        case 38:
+            printf("Viene lanciato un dado per stabilire l'attacco dell'eroe:\n");
+            break;
+        case 39:
+            printf("\nDungeon PALUDE PUTRESCENTE");
+            break;
+        case 40:
+            printf("\nDungeon MAGIONE INFESTATA");
+            break;
+        case 41:
+            printf("\nDungeon GROTTA DI CRISTALLO");
+            break;
+        case 42:
+            printf("\nCASTELLO DEL SIGNORE OSCURO");
+            break;
+        case 43:
+            printf("\n\t***MISSIONE COMPLETATA***\n");
+            printf("\nL'Eroe ha sconfitto Il Vampiro Custode e ottenuto la Chiave del Castello del Signore Oscuro\nla Missione e' stata portata a termine!");
+            break;
+        // FINE PROMPT MISSIONI
+
         case 50:
             printf("\nNon hai abbastanza Monete!\n");
             sleep(1);
@@ -269,25 +327,16 @@ void combattimento(player *player01, foe tipo_nemico){
         tipo_nemico.danno_nemico--;
     }
 
-    // CASO BASE
+    // ATTACCO NON SUFFICIENTE PER SCONFITTA AVVERSARIO
     while(attacco_eroe < tipo_nemico.colpo_fatale){
-        Text(60);
-        printf("Viene lanciato un dado per stabilire l'attacco dell'eroe:\n");
-        //printf("\n");
+        Text(60); Text(38); // Viene lanciato un dado
         printf("Il risultato e': %d", dice_throw); sleep(1);
-        //printf("\n");
-        if(player01->sword){
-            printf("\nL'attacco dell'eroe aumenta di un punto grazie alla spada!\n");
-            //printf("\n");
-        }
-        
+        if(player01->sword){Text(36);}
+
         Text(60);
         printf("Attacco non sufficiente per sconfiggere %s (%d < Colpo fatale = %d)\n", tipo_nemico.nome_nemico, attacco_eroe, tipo_nemico.colpo_fatale);
-        //printf("\n");
         player01->life -= tipo_nemico.danno_nemico;
-        if(player01->armor){
-            printf("\nIl danno inflitto dal nemico cala di un punto grazie all'armatura!\n");
-        }
+        if(player01->armor){Text(37);}
 
         Text(60);
         printf("%s infligge %d danni all'eroe! ", tipo_nemico.nome_nemico, tipo_nemico.danno_nemico); sleep(1);
@@ -295,9 +344,9 @@ void combattimento(player *player01, foe tipo_nemico){
                         
         if (player01->life <= 0) {
             Text(60);
-            printf("L'eroe e' stato sconfitto!\n"); sleep(1);
+            printf("\tL'eroe e' stato sconfitto!\n"); sleep(1);
             Text(60);
-            printf("\nGame Over\n"); sleep(1);
+            printf("\n\t=== GAME OVER ===\n"); sleep(1);
             clear();
             return;
         }
@@ -305,9 +354,10 @@ void combattimento(player *player01, foe tipo_nemico){
         attacco_eroe = dice_throw;
     }
 
-    printf("Viene lanciato un dado per stabilire l'attacco dell'eroe:\n");
-    //printf("\n");
+    // ATTACCO SUFFICIENTE PER SCONFITTA AVVERSARIO
+    Text(38); // viene lanciato un dado
     printf("Il risultato e': %d", dice_throw); sleep(1);
+
     Text(60);
     printf("%s viene sconfitto (Attacco dell'Eroe: %d >= Colpo fatale = %d)", tipo_nemico.nome_nemico, attacco_eroe, tipo_nemico.colpo_fatale); sleep(1);
     player01->money += tipo_nemico.monete_nemico;
@@ -477,25 +527,25 @@ void negozio(player* player01, int MenuNegozio, int choiceMenuNegozio, int buf_s
 
 void inventario(player* player01, int buf_size){
     Text(60);
-    printf("STATISTICHE GIOCATORE");
+    printf("\t\t\t|  STATISTICHE  GIOCATORE  |");
     Text(60);
-    printf("Punti Vita: \t| \t%d\n", player01->life);
-    printf("Monete: \t| \t%d", player01->money);
+    printf("Punti Vita: \t| \t%d\t |\n", player01->life);
+    printf("Monete: \t| \t%d\t |", player01->money);
     Text(60);
-    printf("INVENTARIO");
+    printf("\t\t\t|  I N V E N T A R I O  |");
     Text(60);
-    printf("Pozioni Curative: \t| \t%d\n", player01->potions);
+    printf("Pozioni Curative: \t| \t%d\t |\n", player01->potions);
     if(player01->sword){
         printf("Spada \t\t| \t+1 Attacco\n");
     }
     if(player01->armor){
-        printf("Armatura \t| \t-1 Danno subito | Vecchia armatura abbandonata, potrebbe tornarmi utile\n");
+        printf("Armatura \t| \t-1 Danno subito | Vecchia armatura abbandonata, potrebbe tornarmi utile |\n");
     }
     if(player01->heroSword){
-        printf("Spada dell'Eroe \t| \t+2 Attacco | Una spada grande e lucente, incantata dalle proprieta' straordinarie\n");
+        printf("Spada dell'Eroe \t| \t+2 Attacco | Una spada grande e lucente, incantata dalle proprieta' straordinarie |\n");
     }
     if(player01->CastleKey){
-        printf("Chiave \t| \tHo il presentimento che potrebbe tornarmi utile...");
+        printf("Chiave del Castello del Signore Oscuro \t| \tHo il presentimento che potrebbe tornarmi utile... |");
     }
 
     int usePotion = 0;

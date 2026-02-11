@@ -107,8 +107,9 @@ void menu(int CheatMode){
 
                 Text(60);
                 printf("\nSeleziona un'opzione per il salvataggio %d: ", SaveIndex);
-                printf("\n  1. Carica\n  2. Elimina\n");
-                printf("\nSeleziona opzione [1-2]: ");
+                Text(31);
+                //printf("\n  1. Carica\n  2. Elimina\n");
+                //printf("\nSeleziona opzione [1-2]: ");
 
                 //clear();
                 Option = InputHandlerInt(buf_size);
@@ -197,7 +198,7 @@ void game(player player01, int CheatMode){
     int mission_selector_range = player01.mission_selector_range;   // default 7, non toccare
 
     do{
-        printf("Seleziona una delle opzioni del menu [1-5]: ");
+        Text(32); // prompt selezione opzione menu del villaggio
         int choice_villaggio = 0;
         int choice_missione = 0;
         int buf_size = 2;
@@ -347,10 +348,7 @@ void game(player player01, int CheatMode){
                 break;
             case 2: // riposo ripristina 20 punti vita
                 player01.life = 20;
-                Text(60);
-                printf("\nI tuoi punti vita sono stati ripristinati!\n");
-                printf("\n");
-                Text(5);
+                Text(33);
                 break;
             case 3: //implementa inventario
                 clear();
