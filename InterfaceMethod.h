@@ -187,7 +187,7 @@ void Text(int code){
     }
 }
 
-void rooms_generator(int* dungeon_rooms){
+void rooms_generator_palude(int* dungeon_rooms){
     //srand(time(NULL));
     int cnt = 0;
     int entropy;
@@ -229,6 +229,31 @@ void rooms_generator(int* dungeon_rooms){
     return;
 }
 
+void rooms_generator_magione(int* dungeon_rooms){
+    //srand(time(NULL));
+    int vampiro = 0;
+    int demone = 0;
+    int entropy;
+
+    for(int i = 0; i < 8; i++){
+        dungeon_rooms[i] = DiceThrow();
+        if(dungeon_rooms[i] == 5){
+            vampiro++;
+        }
+        else if(dungeon_rooms[i] == 5){
+            demone++;
+        }
+    }
+    if(vampiro == 0){
+        dungeon_rooms[8] = 5;
+    }
+    if(demone == 0){
+        dungeon_rooms[9] = 6;
+    }
+    
+    return;
+}
+
 void combattimento(player *player01, foe tipo_nemico){
 
     Text(60);
@@ -252,7 +277,7 @@ void combattimento(player *player01, foe tipo_nemico){
         printf("Il risultato e': %d", dice_throw); sleep(1);
         //printf("\n");
         if(player01->sword){
-            printf("L'attacco dell'eroe aumenta di un punto grazie alla spada!\n");
+            printf("\nL'attacco dell'eroe aumenta di un punto grazie alla spada!\n");
             //printf("\n");
         }
         
@@ -261,7 +286,7 @@ void combattimento(player *player01, foe tipo_nemico){
         //printf("\n");
         player01->life -= tipo_nemico.danno_nemico;
         if(player01->armor){
-            printf("Il danno inflitto dal nemico cala di un punto grazie all'armatura!\n");
+            printf("\nIl danno inflitto dal nemico cala di un punto grazie all'armatura!\n");
         }
 
         Text(60);
@@ -284,7 +309,7 @@ void combattimento(player *player01, foe tipo_nemico){
     //printf("\n");
     printf("Il risultato e': %d", dice_throw); sleep(1);
     Text(60);
-    printf("%s viene sconfitto (%d >= Colpo fatale = %d)", tipo_nemico.nome_nemico, attacco_eroe, tipo_nemico.colpo_fatale); sleep(1);
+    printf("%s viene sconfitto (Attacco dell'Eroe: %d >= Colpo fatale = %d)", tipo_nemico.nome_nemico, attacco_eroe, tipo_nemico.colpo_fatale); sleep(1);
     player01->money += tipo_nemico.monete_nemico;
 
     return;
@@ -306,6 +331,7 @@ void negozio(player* player01, int MenuNegozio, int choiceMenuNegozio, int buf_s
                 else{
                     Text(50);
                 }
+                clear();
                 break;
             case 2:
             // spada
@@ -317,6 +343,7 @@ void negozio(player* player01, int MenuNegozio, int choiceMenuNegozio, int buf_s
                 else{
                     Text(50);
                 }
+                clear();
                 break;
             case 3:
             // armatura
@@ -328,12 +355,15 @@ void negozio(player* player01, int MenuNegozio, int choiceMenuNegozio, int buf_s
                 else{
                     Text(50);
                 }
+                clear();
                 break;
             case 4:
             // esci dal Negozio
+                clear();
                 break;
             default:
                 printf("\nScelta non valida!\n");
+                clear();
                 break;
         }
     }
@@ -352,6 +382,7 @@ void negozio(player* player01, int MenuNegozio, int choiceMenuNegozio, int buf_s
                 else{
                     Text(50);
                 }
+                clear();
                 break;
             case 2:
             // spada
@@ -363,12 +394,15 @@ void negozio(player* player01, int MenuNegozio, int choiceMenuNegozio, int buf_s
                 else{
                     Text(50);
                 }
+                clear();
                 break;
             case 3:
             // esci dal Negozio
+                clear();
                 break;
             default:
                 printf("\nScelta non valida!\n");
+                clear();
                 break;
         }
     }
@@ -387,6 +421,7 @@ void negozio(player* player01, int MenuNegozio, int choiceMenuNegozio, int buf_s
                 else{
                     Text(50);
                 }
+                clear();
                 break;
             case 2:
             // armatura
@@ -398,12 +433,15 @@ void negozio(player* player01, int MenuNegozio, int choiceMenuNegozio, int buf_s
                 else{
                     Text(50);
                 }
+                clear();
                 break;
             case 3:
             // esci dal Negozio
+                clear();
                 break;
             default:
                 printf("\nScelta non valida!\n");
+                clear();
                 break;
         }
     }
@@ -422,15 +460,19 @@ void negozio(player* player01, int MenuNegozio, int choiceMenuNegozio, int buf_s
                 else{
                     Text(50);
                 }
+                clear();
                 break;
             case 2:
             // esci dal Negozio
+                clear();
                 break;
             default:
                 printf("\nScelta non valida!\n");
+                clear();
                 break;
         }
     }
+    return;
 }
 
 void inventario(player* player01, int buf_size){
@@ -456,41 +498,48 @@ void inventario(player* player01, int buf_size){
         printf("Chiave \t| \tHo il presentimento che potrebbe tornarmi utile...");
     }
 
-    if(player01->potions >= 1){
-        int usePotion = 0;
-        printf("Vuoi usare una Pozione Curativa?");
-        printf("\n  1. Si\n  2. No\n");
-        printf("\nSeleziona opzione [1-2]: ");
-        usePotion = InputHandlerInt(buf_size);
-        switch(usePotion){
-            case 1:
+    int usePotion = 0;
+    printf("\nVuoi usare una Pozione Curativa?");
+    printf("\n  1. Si\n  2. No\n");
+    printf("\nSeleziona opzione [1-2]: ");
+    usePotion = InputHandlerInt(buf_size);
+    switch(usePotion){
+        case 1:
+            if(player01->potions < 1){
+                printf("\nNon hai una Pozione Curativa da usare!\n");
+                clear();
+            }
+            else{
                 int throw = DiceThrow();
                 player01->potions -= 1;
                 if((player01->life + throw) > 20){
-                    player01->life = 20;
-                    int value = throw - ((player01->life + throw)-20);
-                    printf("La salute dell'Eroe e' salita di %d punti Vita!\n", value);
+                    if(player01->life <= 20){ player01->life = 20;}
+                    printf("La salute dell'Eroe e' salita di %d punti Vita ed e' arrivata al massimo!\n", throw);
                 }
                 else{
                     player01->life += throw;
                     printf("La salute dell'Eroe e' salita di %d punti Vita!\n", throw);
                 }
-                break;
-            case 2:
-                break;
-            default:
-                printf("\nScelta non valida!\n");
-                break;
+                clear();
+            }   
+            break;
+        case 2:
+            clear();
+            break;
+        default:
+            printf("\nScelta non valida!\n");
+            clear();
+            break;
         }
-    }
     
-    if(player01->potions <= 0){
-        printf("Press Enter to quit: ");
-        int choice = getchar();
-    }
-    else{
-        getchar();
-    }
+    //if(player01->potions < 0){
+    //    printf("Press Enter to quit: ");
+    //    int choice = getchar();
+    //}
+    //else{
+        //getchar();
+    //}
+    //printf("");
     return;
 }
 
@@ -505,4 +554,40 @@ void AcquitrinoVelenosoEvent(player* player01){
     Text(60);
     printf("L'Eroe subisce %d danni!\n", danno_nemico); sleep(1);
     return;
+}
+
+void BotolaBuiaEvent(player* player01){
+    int danno_nemico = 3;
+    if(player01->armor){
+        danno_nemico--;
+    }
+    Text(60);
+    printf("L'Eroe cade in un Acquitrino Velenoso!\n"); sleep(1);
+    player01->life -= danno_nemico;
+    Text(60);
+    printf("L'Eroe subisce %d danni!\n", danno_nemico); sleep(1);
+    return;
+}
+
+bool padovan(int num) { // stabilisce se un numero appartiene alla sequenza di padovan e restituisce un valore di verità
+    int seq_pad[500]; // questa funzione servirà per stabilire se un numero tra 1 e 500 appartiene alla sequenza, non sapendo quanti valori sono, riservo spazio per 500 interi
+    seq_pad[0] = 1; //assegno i primi 3 valori della sequenza
+    seq_pad[1] = 1;
+    seq_pad[2] = 1;
+    int contatore = 3; 
+    for (int i = 3 ; i < 500; i++) { // in questo ciclo genero la sequenza di Padovan dei numeri fino a 500
+        int new_num = seq_pad[i-2] + seq_pad[i-3];
+        if (new_num > 500) break; // la sequenza mi serve fino al numero 500, quindi se lo supero esco dal ciclo e non genero ulteriori numeri
+        seq_pad[i] = new_num; 
+        contatore++; // tengo traccia di quanti numeri ho memorizzato
+    }
+    for (int i = 0; i < contatore; i++) { // controllo se il numero dato in input alla funzione è presente nella sequenza generata
+        if (num == seq_pad[i]) {    
+        //printf("Il numero %d appartiene alla sequenza di Padovan.\n", num); PER L'UTILIZZO CHE FAREMO DELLA FUNZIONE QUESTA STAMPA NON SERVE
+        return true;
+        } 
+    }
+// arrivo qui solamente se il numero non appartiene alla sequenza
+// printf("Il numero %d non appartiene alla sequenza di Padovan.\n", num); PER L'UTILIZZO CHE FAREMO DELLA FUNZIONE QUESTA STAMPA NON SERVE
+    return false;
 }

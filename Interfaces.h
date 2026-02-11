@@ -7,6 +7,7 @@
 #include "InterfaceMethod.h"
 #include "struct.h"
 #include "PaludePutrescente.h"
+#include "MagioneInfestata.h"
 //#include "palude_putrescente.h"
 #define BUF 128
 
@@ -226,22 +227,8 @@ void game(player player01, int CheatMode){
                                 int* RoomPointer;
                                 PaludePutrescenteIsCompleted = palude_putrescente(&player01, Pdungeon_rooms, RoomPointer);
                                 // logica di rilevazione Missione Superata con Successo o Game Over ( player.life <= 0 )
-                                if(PaludePutrescenteIsCompleted){
-                                    // La funzione palude_putrescente() torna 1, la missione e' quindi superata con successo
-                                    player01.palude = true;
-                                    player01.CompletedMissions += 1;
-                                    // varia il valore di mission_selector per future corrette visualizzazioni delle prossime opzioni di scelta tra le varie missioni disponibili
-                                    if(mission_selector == 6 || mission_selector == 11){
-                                        player01.mission_selector += 1;
-                                    }
-                                    else if(mission_selector == 9){
-                                        player01.mission_selector -= 1;
-                                    }
-                                    // richiama game() e ritorna al Menu' del Villaggio
-                                    game(player01, CheatMode);
-                                }
-                                else if(!PaludePutrescenteIsCompleted){
-                                    // La funzione palude_putrescente() torna 3, il player e' incorso in un Game Over
+                                if(!PaludePutrescenteIsCompleted){
+                                    // La funzione palude_putrescente() torna false, il player e' incorso in un Game Over
                                     // Richiamo direttamente la funzione menu(), ricomincio da capo e torno al Menu Principale
                                     menu(CheatMode);
                                 }
@@ -261,7 +248,19 @@ void game(player player01, int CheatMode){
                             }
                             else if(mission_selector == 7 || mission_selector == 12){
                                 clear();
-                                printf("\nBenvenuto nella magione infestata!\n");
+                                //INIZIO MISSIONE
+                                int Mdungeon_rooms[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+                                int* RoomPointer;
+                                MagioneInfestataIsCompleted = magione_infestata(&player01, Mdungeon_rooms, RoomPointer);
+                                // logica di rilevazione Missione Superata con Successo o Game Over ( player.life <= 0 )
+                                if(!MagioneInfestataIsCompleted){
+                                    // La funzione magione_infestata() torna false, il player e' incorso in un Game Over
+                                    // Richiamo direttamente la funzione menu(), ricomincio da capo e torno al Menu Principale
+                                    menu(CheatMode);
+                                }
+
+                                player01.magione = true;
+                                player01.CompletedMissions += 1;
 
                                 if(mission_selector == 7){
                                     player01.mission_selector += 1;
@@ -280,7 +279,19 @@ void game(player player01, int CheatMode){
                         case 2:
                             if(mission_selector == 6 || mission_selector == 11){
                                 clear();
-                                printf("\nBenvenuto nella magione infestata!\n");
+                                //INIZIO MISSIONE
+                                int Mdungeon_rooms[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+                                int* RoomPointer;
+                                MagioneInfestataIsCompleted = magione_infestata(&player01, Mdungeon_rooms, RoomPointer);
+                                // logica di rilevazione Missione Superata con Successo o Game Over ( player.life <= 0 )
+                                if(!MagioneInfestataIsCompleted){
+                                    // La funzione palude_putrescente() torna false, il player e' incorso in un Game Over
+                                    // Richiamo direttamente la funzione menu(), ricomincio da capo e torno al Menu Principale
+                                    menu(CheatMode);
+                                }
+
+                                player01.magione = true;
+                                player01.CompletedMissions += 1;
 
                                 if(mission_selector == 6){
                                     player01.mission_selector += 3;
@@ -344,7 +355,7 @@ void game(player player01, int CheatMode){
             case 3: //implementa inventario
                 clear();
                 inventario(&player01, buf_size);
-                break;
+                game(player01, CheatMode);
             case 4: //implementa salvataggio
                 //DEBUG
                 //player01.life = 17;

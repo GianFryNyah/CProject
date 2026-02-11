@@ -2,47 +2,58 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-bool palude_putrescente(player* player01, int* dungeon_rooms, int* RoomPointer) {
+bool magione_infestata(player* player01, int* dungeon_rooms, int* RoomPointer) {
     // template Menu' di Missione
     bool exitDoWhile = false;
 
     // variabili di supporto per funzionalita' MENU'
-    int choice_palude = 0; 
+    int choice_magione = 0; 
     int room = 0;
     int MenuNegozio = 22;
     int choiceMenuNegozio = 26;
     int buf_size = 2;
-    int objective = 0;
+    bool VampiroKill = false;
 
     srand(time(NULL));
-    printf("\nObiettivo : Eliminare 3 Generale Orco");
-    printf("\nStato di avanzamento : Eliminati %d su 3 Generale Orco", objective);
+    printf("\nObiettivo :  Recupera la chiave del Castello del Signore Oscuro e sconfiggi un Vampiro Superiore");
+    if(VampiroKill){
+        printf("\nStato di avanzamento : Vampiro Superiore sconfitto!");
+    }
+    else if(player01->CastleKey){
+        printf("\nStato di avanzamento : Chiave del Castello del Signore Oscuro ottenuta!");
+    }
+    else{
+        printf("\nStato di avanzamento : Nessun progresso");
+    }
+    // if per vampiro ammazzato e/o chiave ottenuta
     Text(20);
     
-    rooms_generator_palude(dungeon_rooms);
+    rooms_generator_magione(dungeon_rooms);
     RoomPointer = dungeon_rooms;
     
     // do-while nel quale si svolgera' la missione, termina solo quando la missione deve finire ( Superamento Missione, ritorno al Menu' del Villaggio, Game Over )
     do{
         // scope interno DO-WHILE
-        foe cane_selvaggio = {"Cane Selvaggio", 2, 1, 0};
-        foe goblin = {"Goblin", 3, 2, 2};
-        foe scheletro = {"Scheletro", 4, 2, 4};
-        foe orco = {"Orco", 3, 4, 6};
-        foe generale_orco = {"Generale Orco", 6, 3, 12};
+        foe pipistrello = {"Pipistrello", 2, 2, 1};
+        foe zombie = {"Zombie", 3, 2, 2};
+        foe fantasma = {"Fantasma", 5, 2, 4};
+        foe vampiro = {"Vampiro Superiore", 4, 4, 7};
+        foe demone = {"Demone Custode", 4, 6, 10};
 
         // prompt scelta da selezionare, da ripetersi fino ad input valido
         Text(21); // scelta tra 1 e 4 compresi
-        choice_palude = InputHandlerInt(buf_size);
+        choice_magione = InputHandlerInt(buf_size);
 
         // Implementazione logica del Menu' di Missione
-        switch(choice_palude){
+        switch(choice_magione){
             case 1:
                 room = *RoomPointer;
 
                 switch(room){
                     case 1:
-                        combattimento(player01, cane_selvaggio);
+                        // stanza trappola
+                        // il danno e' 3
+                        BotolaBuiaEvent(player01);
                         // in questo if controllo se il player ha vita maggiore o minore-uguale a zero
                         if(player01->life <= 0){
                             // game over
@@ -50,7 +61,7 @@ bool palude_putrescente(player* player01, int* dungeon_rooms, int* RoomPointer) 
                         }
                         break;
                     case 2:
-                        combattimento(player01, goblin);
+                        combattimento(player01, pipistrello);
                         // in questo if controllo se il player ha vita maggiore o minore-uguale a zero
                         if(player01->life <= 0){
                             // game over
@@ -58,7 +69,7 @@ bool palude_putrescente(player* player01, int* dungeon_rooms, int* RoomPointer) 
                         }
                         break;
                     case 3:
-                        combattimento(player01, scheletro);
+                        combattimento(player01, zombie);
                         // in questo if controllo se il player ha vita maggiore o minore-uguale a zero
                         if(player01->life <= 0){
                             // game over
@@ -66,7 +77,7 @@ bool palude_putrescente(player* player01, int* dungeon_rooms, int* RoomPointer) 
                         }
                         break;
                     case 4:
-                        combattimento(player01, orco);
+                        combattimento(player01, fantasma);
                         // in questo if controllo se il player ha vita maggiore o minore-uguale a zero
                         if(player01->life <= 0){
                             // game over
@@ -74,35 +85,27 @@ bool palude_putrescente(player* player01, int* dungeon_rooms, int* RoomPointer) 
                         }
                         break;
                     case 5:
-                        // stanza trappola
-                        // il danno e' compreso tra 1 e 6 ed e' stabilito dal tiro del dado
-                        AcquitrinoVelenosoEvent(player01);
+                        combattimento(player01, vampiro);
                         // in questo if controllo se il player ha vita maggiore o minore-uguale a zero
                         if(player01->life <= 0){
                             // game over
                             return false;
                         }
+                        else{
+                            VampiroKill = true;
+                        }
                         break;
                     case 6:
                         // requisito per superare la missione: sconfiggerne tre
-
-                        if(player01->sword){
-                            generale_orco.colpo_fatale = 5;
-                            combattimento(player01, generale_orco);
-                            // in questo if controllo se il player ha vita maggiore o minore-uguale a zero
-                            if(player01->life <= 0){
-                                // game over
-                                return false;
-                            }
-                            objective++;
+                        combattimento(player01, demone);
+                        // in questo if controllo se il player ha vita maggiore o minore-uguale a zero
+                        if(player01->life <= 0){
+                            // game over
+                            return false;
                         }
                         else{
-                            combattimento(player01, generale_orco);
-                            if(player01->life <= 0){
-                                // game over
-                                return false;
-                            }
-                            objective++;
+                            // sconfiggendo il demone ottieni la chiave del Castello
+                            player01->CastleKey = true;
                         }
                         break;
                 }
@@ -144,24 +147,29 @@ bool palude_putrescente(player* player01, int* dungeon_rooms, int* RoomPointer) 
             // FINE SWITCH
         }
 
-        if(objective >= 1){
+        if(VampiroKill && (player01->CastleKey)){
             clear();
-            printf("\nL'Eroe ha sconfitto l'ultimo dei tre Generali Orco, la Missione e' stata portata a termine!"); sleep(1);
+            printf("\nL'Eroe ha sconfitto Il Vampiro Custode e ottenuto la Chiave del Castello del Signore Oscuro\nla Missione e' stata portata a termine!"); sleep(1);
             exitDoWhile = true;
         }
     
         if(!exitDoWhile){
-            printf("\nObiettivo : Eliminare 3 Generale Orco");
-            printf("\nStato di avanzamento : Eliminati %d su 3 Generale Orco", objective);
+            printf("\nObiettivo :  Recupera la chiave del Castello del Signore Oscuro e sconfiggi un Vampiro Superiore");
+            if(VampiroKill){
+                printf("\nStato di avanzamento : Vampiro Superiore sconfitto!");
+            }
+            else if(player01->CastleKey){
+                printf("\nStato di avanzamento : Chiave del Castello del Signore Oscuro ottenuta!");
+            }
+            else{
+                printf("\nStato di avanzamento : Nessun progresso");
+            }
             Text(20);
         }
 
         //clear();
 
     } while(!exitDoWhile);
-
-    //printf("\nL'Eroe ha sconfitto l'ultimo dei tre Generali Orco, la Missione e' stata portata a termine!");
-    //printf("Premi Enter per continuare: ");
 
     return true;
 }
