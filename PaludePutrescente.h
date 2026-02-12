@@ -104,7 +104,7 @@ bool palude_putrescente(player* player01, int* dungeon_rooms, int* RoomPointer) 
                         break;
                     case 6:
                         // si incontra un nemico, chiamo la funzione combattimento che gestisce le dinamiche di combattimento
-                        if(player01->sword){
+                        if(player01->heroSword){
                             generale_orco.colpo_fatale = 5;
                             combattimento(player01, generale_orco);
                             // in questo if controllo se il player ha vita maggiore o minore-uguale a zero
@@ -161,7 +161,6 @@ bool palude_putrescente(player* player01, int* dungeon_rooms, int* RoomPointer) 
         }
 
         if(objective >= 3){
-            clear();
             Text(34); sleep(1);
             exitDoWhile = true;
         }
