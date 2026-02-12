@@ -771,26 +771,27 @@ void RupeScoscesaEvent(player* player01){
 // FINE METODI EVENTI SPECIALI STANZE/TRAPPOLE/FORZIERI
 
 // Stabilisce se l'intero passatogli int num appartenga o meno alla sequenza di Padovan
-// E' stato usato un approcio iterativo per una migliore efficienza
-bool padovan(int num) {
-    int seq_pad[24]; // questa funzione servirà per stabilire se un numero tra 1 e 500 appartiene alla sequenza, non sapendo quanti valori sono, riservo spazio per 500 interi
-    seq_pad[0] = 1; //assegno i primi 3 valori della sequenza
-    seq_pad[1] = 1;
-    seq_pad[2] = 1;
-
-    for (int i = 3 ; i < 24; i++) { // in questo ciclo genero la sequenza di Padovan dei numeri fino a 500
-        int new_num = seq_pad[i-2] + seq_pad[i-3];
-        //if (new_num > 500) break; // la sequenza mi serve fino al numero 500, quindi se lo supero esco dal ciclo e non genero ulteriori numeri
-        seq_pad[i] = new_num;
-        // CONTROLLO DURANTE LO SCORRIMENTO STESSO DELLA SERIE SE NUM APPARTIENE ALLA SERIE DI PADOVAN
-        if (num == seq_pad[i]) {    
-        //printf("Il numero %d appartiene alla sequenza di Padovan.\n", num); PER L'UTILIZZO CHE FAREMO DELLA FUNZIONE QUESTA STAMPA NON SERVE
-        return true;
-        }
-        //contatore++; // tengo traccia di quanti numeri ho memorizzato
+// E' stato usato un approcio ricorsivo
+// dato un valore n stabilisce il valore della funzione Serie di Padovan --> P(n) = P(n-2)+P(n-3)
+int rec_padovan(int num) {
+    // CASO BASE
+    if((num==0)||(num==1)||(num==2)){
+        return 1;
     }
-// arrivo qui solamente se il numero non appartiene alla sequenza
-// printf("Il numero %d non appartiene alla sequenza di Padovan.\n", num); PER L'UTILIZZO CHE FAREMO DELLA FUNZIONE QUESTA STAMPA NON SERVE
+    // PASSO INDUTTIVO
+    else{
+        return (padovan(num-2) + padovan(num-3));
+    }
+}
+
+// Stabilisce se per vari possibili n la funzione Serie di Padovan sia uguale, per un n, al valore num che vogliamo controllare
+// Controlla fino a n = 25, valore per cui la funzione Serie di Padovan torna certamente un valore superiore a 500
+bool padovan(int num){
+    for (int i = 0 ; i < 25; i++){
+        if(padovan(i) == num){
+            return true;
+        }
+    }
     return false;
 }
 
