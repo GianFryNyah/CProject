@@ -780,7 +780,7 @@ int rec_padovan(int num) {
     }
     // PASSO INDUTTIVO
     else{
-        return (padovan(num-2) + padovan(num-3));
+        return (rec_padovan(num-2) + rec_padovan(num-3));
     }
 }
 
@@ -788,7 +788,7 @@ int rec_padovan(int num) {
 // Controlla fino a n = 25, valore per cui la funzione Serie di Padovan torna certamente un valore superiore a 500
 bool padovan(int num){
     for (int i = 0 ; i < 25; i++){
-        if(padovan(i) == num){
+        if(rec_padovan(i) == num){
             return true;
         }
     }
@@ -849,7 +849,6 @@ void combattimento_drago(player* player01, foe tipo_nemico){
 
             switch(answer){
                 case 1:
-                    clear();
                     if(IsInPadovan){
                         // risposta corretta - danno 0
                         Text(60);
@@ -872,7 +871,6 @@ void combattimento_drago(player* player01, foe tipo_nemico){
                     printf("");
                     break;
                 case 2:
-                    clear();
                     if(!IsInPadovan){
                         // risposta corretta - danno 0
                         Text(60);
