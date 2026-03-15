@@ -93,7 +93,7 @@ void menu(int CheatMode){
                 //20 punti vita, 0 monete, 0 oggetti, 0 missioni completate.
                 //Vedi la Sezione 3 per lo svolgimento e le regole del gioco.
                 clear();
-                player NewPlayer = {20, 0, 0, 0, 6, 7, 0, false, false, false, false, false, false, false};
+                player NewPlayer = {20, 0, 0, 0, 0, false, false, false, false, false, false, false};
                 game(NewPlayer, CheatMode);
             case 2:
                 //mostra i salvataggi da poter caricare
@@ -172,6 +172,8 @@ void menu(int CheatMode){
 }
 
 void game(player player01, int CheatMode){
+    clear();
+
     bool PaludePutrescenteIsCompleted = false;
     bool MagioneInfestataIsCompleted = false;
     bool GrottaDiCristalloIsCompleted = false;
@@ -179,13 +181,6 @@ void game(player player01, int CheatMode){
     
     bool menu_villaggio = true;
     Text(5);
-
-    int mission_selector = player01.mission_selector;               // default 6, toccare solo per debugging
-    int mission_selector_range = player01.mission_selector_range;   // default 7, non toccare
-
-    if(player01.CompletedMissions == 3){
-        mission_selector = 99;
-    }
 
     do{
         Text(32); // prompt selezione opzione menu del villaggio
@@ -201,182 +196,135 @@ void game(player player01, int CheatMode){
             case 1:
             // INTRAPRENDI UNA MISSIONE
                 clear();
-                Text(mission_selector);
+                int cnt = 0;
+                printf("\nMenu di Selezione Missione:\n");
+                if(!player01.palude){printf("\n  %d. Palude Putrescente", ++cnt);}
+                if(!player01.magione){printf("\n  %d. Magione Infestata", ++cnt);}
+                if(!player01.grotta){printf("\n  %d. Grotta di Cristallo", ++cnt);}
+                if(player01.CompletedMissions == 3){printf("\n  1. Castello del Signore Oscuro\n");}
+                printf("\n");
                 // do-while responsabile per l'interfaccia di selezione missione
                 // include logiche di gestione del menu' di selezione visualizzato in output
                 do{
-                    Text(mission_selector + mission_selector_range);
+                    if(cnt>1){printf("Seleziona una delle opzioni [1-%d]: ", cnt);}
+                    else{printf("Seleziona una delle opzioni [1]: ");}
+                    
                     choice_missione = InputHandlerInt(buf_size);
                     switch(choice_missione) {
                         // logiche delle possibili missioni da visualizzare come scelta numero 1
                         case 1:
-                            if(mission_selector == 6 || mission_selector == 9 || mission_selector == 10 || mission_selector == 11){
-                                clear();
-                                //printf("\nBenvenuto nella palude putrescente!\n");
+                            if(cnt>=0){
+                                if(!player01.palude){
+                                    clear();
+                                    //printf("\nBenvenuto nella palude putrescente!\n");
 
-                                //INIZIO MISSIONE
-                                int Pdungeon_rooms[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-                                int* RoomPointer;
-                                PaludePutrescenteIsCompleted = palude_putrescente(&player01, Pdungeon_rooms, RoomPointer);
-                                // logica di rilevazione Missione Superata con Successo o Game Over ( player.life <= 0 )
-                                if(!PaludePutrescenteIsCompleted){
-                                    // La funzione palude_putrescente() torna false, il player e' incorso in un Game Over
-                                    // Richiamo direttamente la funzione menu(), ricomincio da capo e torno al Menu Principale
+                                    //INIZIO MISSIONE
+
+                                    int Pdungeon_rooms[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+                                    int* RoomPointer;
+                                    player01.palude = palude_putrescente(&player01, Pdungeon_rooms, RoomPointer);
+                                    // logica di rilevazione Missione Superata con Successo o Game Over ( player.life <= 0 )
+                                    if(!player01.palude){
+                                        // La funzione palude_putrescente() torna false, il player e' incorso in un Game Over
+                                        // Richiamo direttamente la funzione menu(), ricomincio da capo e torno al Menu Principale
+                                        menu(CheatMode);
+                                    }
+                                    player01.CompletedMissions += 1;
+                                    game(player01, CheatMode);
+                                }
+                                else if(!player01.magione){
+                                    clear();
+                                    //INIZIO MISSIONE
+                                    int Mdungeon_rooms[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+                                    int* RoomPointer;
+                                    player01.magione = magione_infestata(&player01, Mdungeon_rooms, RoomPointer);
+                                    // logica di rilevazione Missione Superata con Successo o Game Over ( player.life <= 0 )
+                                    if(!player01.magione){
+                                        // La funzione palude_putrescente() torna false, il player e' incorso in un Game Over
+                                        // Richiamo direttamente la funzione menu(), ricomincio da capo e torno al Menu Principale
+                                        menu(CheatMode);
+                                    }
+                                    player01.CompletedMissions += 1;
+                                    game(player01, CheatMode);
+                                }
+                                else if(!player01.grotta){
+                                    clear();
+                                    //INIZIO MISSIONE
+                                    int Gdungeon_rooms[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+                                    int* RoomPointer;
+                                    player01.grotta = grotta_di_cristallo(&player01, Gdungeon_rooms, RoomPointer);
+                                    // logica di rilevazione Missione Superata con Successo o Game Over ( player.life <= 0 )
+                                    if(!player01.grotta){
+                                        // La funzione grotta_di_cristallo() torna false, il player e' incorso in un Game Over
+                                        // Richiamo direttamente la funzione menu(), ricomincio da capo e torno al Menu Principale
+                                        menu(CheatMode);
+                                    }
+                                    player01.CompletedMissions += 1;
+                                    game(player01, CheatMode);
+                                }
+                                else if(player01.CompletedMissions == 3){
+                                    clear();
+                                    bool win;
+                                    win = missione_finale();
+                                    if(!win){
+                                        menu(CheatMode);
+                                    }
+                                    printf("\n\t |  C O N G R A T U L A Z I O N I ! | \t\n");
                                     menu(CheatMode);
                                 }
-
-                                player01.palude = true;
-                                player01.CompletedMissions += 1;
-
-                                if(mission_selector == 6 || mission_selector == 11){
-                                    player01.mission_selector += 1;
-                                }
-                                else if(mission_selector == 9){
-                                    player01.mission_selector -= 1;
-                                }
-
-                                game(player01, CheatMode); 
-                                //palude_putrescente();
                             }
-                            else if(mission_selector == 7 || mission_selector == 12){
-                                clear();
-                                //INIZIO MISSIONE
-                                int Mdungeon_rooms[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-                                int* RoomPointer;
-                                MagioneInfestataIsCompleted = magione_infestata(&player01, Mdungeon_rooms, RoomPointer);
-                                // logica di rilevazione Missione Superata con Successo o Game Over ( player.life <= 0 )
-                                if(!MagioneInfestataIsCompleted){
-                                    // La funzione magione_infestata() torna false, il player e' incorso in un Game Over
-                                    // Richiamo direttamente la funzione menu(), ricomincio da capo e torno al Menu Principale
-                                    menu(CheatMode);
-                                }
-
-                                player01.magione = true;
-                                player01.CompletedMissions += 1;
-
-                                if(mission_selector == 7){
-                                    player01.mission_selector += 1;
-                                }
-
-                                game(player01, CheatMode);
-                                //magione_infestata();
-                            }
-                            else if(mission_selector == 8){
-                                clear();
-                                //INIZIO MISSIONE
-                                int Gdungeon_rooms[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-                                int* RoomPointer;
-                                GrottaDiCristalloIsCompleted = grotta_di_cristallo(&player01, Gdungeon_rooms, RoomPointer);
-                                // logica di rilevazione Missione Superata con Successo o Game Over ( player.life <= 0 )
-                                if(!GrottaDiCristalloIsCompleted){
-                                    // La funzione grotta_di_cristallo() torna false, il player e' incorso in un Game Over
-                                    // Richiamo direttamente la funzione menu(), ricomincio da capo e torno al Menu Principale
-                                    menu(CheatMode);
-                                }
-
-                                player01.grotta = true;
-                                player01.CompletedMissions += 1;
-
-                                game(player01, CheatMode);
-                                //grotta_di_cristallo();
-                            }
-                            else if(mission_selector == 99){
-                                clear();
-                                bool win;
-                                win = missione_finale();
-                                if(!win){
-                                    menu(CheatMode);
-                                }
-                                printf("\n\t |  C O N G R A T U L A Z I O N I ! | \t\n");
-                                menu(CheatMode);
-                            }                        
-                            break;
+                            else{clear(); break;}
                         case 2:
-                            if(mission_selector == 6 || mission_selector == 11){
-                                clear();
-                                //INIZIO MISSIONE
-                                int Mdungeon_rooms[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-                                int* RoomPointer;
-                                MagioneInfestataIsCompleted = magione_infestata(&player01, Mdungeon_rooms, RoomPointer);
-                                // logica di rilevazione Missione Superata con Successo o Game Over ( player.life <= 0 )
-                                if(!MagioneInfestataIsCompleted){
-                                    // La funzione palude_putrescente() torna false, il player e' incorso in un Game Over
-                                    // Richiamo direttamente la funzione menu(), ricomincio da capo e torno al Menu Principale
-                                    menu(CheatMode);
+                            if(cnt>=2){
+                                if(!player01.magione){
+                                    clear();
+                                    //INIZIO MISSIONE
+                                    int Mdungeon_rooms[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+                                    int* RoomPointer;
+                                    player01.magione = magione_infestata(&player01, Mdungeon_rooms, RoomPointer);
+                                    // logica di rilevazione Missione Superata con Successo o Game Over ( player.life <= 0 )
+                                    if(!player01.magione){
+                                        // La funzione palude_putrescente() torna false, il player e' incorso in un Game Over
+                                        // Richiamo direttamente la funzione menu(), ricomincio da capo e torno al Menu Principale
+                                        menu(CheatMode);
+                                    }
+                                    player01.CompletedMissions += 1;
+                                    game(player01, CheatMode);
                                 }
-
-                                player01.magione = true;
-                                player01.CompletedMissions += 1;
-
-                                if(mission_selector == 6){
-                                    player01.mission_selector += 3;
+                                else if(!player01.grotta){
+                                    clear();
+                                    //INIZIO MISSIONE
+                                    int Gdungeon_rooms[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+                                    int* RoomPointer;
+                                    player01.grotta = grotta_di_cristallo(&player01, Gdungeon_rooms, RoomPointer);
+                                    // logica di rilevazione Missione Superata con Successo o Game Over ( player.life <= 0 )
+                                    if(!player01.grotta){
+                                        // La funzione grotta_di_cristallo() torna false, il player e' incorso in un Game Over
+                                        // Richiamo direttamente la funzione menu(), ricomincio da capo e torno al Menu Principale
+                                        menu(CheatMode);
+                                    }
+                                    player01.CompletedMissions += 1;
+                                    game(player01, CheatMode);
                                 }
-                                else if(mission_selector == 11){
-                                    player01.mission_selector -= 1;
-                                }
-
-                                game(player01, CheatMode);
-                                //magione_infestata();
                             }
-                            else if(mission_selector == 7 || mission_selector == 9){
-                                clear();
-                                //INIZIO MISSIONE
-                                int Gdungeon_rooms[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-                                int* RoomPointer;
-                                GrottaDiCristalloIsCompleted = grotta_di_cristallo(&player01, Gdungeon_rooms, RoomPointer);
-                                // logica di rilevazione Missione Superata con Successo o Game Over ( player.life <= 0 )
-                                if(!GrottaDiCristalloIsCompleted){
-                                    // La funzione grotta_di_cristallo() torna false, il player e' incorso in un Game Over
-                                    // Richiamo direttamente la funzione menu(), ricomincio da capo e torno al Menu Principale
-                                    menu(CheatMode);
-                                }
-
-                                player01.grotta = true;
-                                player01.CompletedMissions += 1;
-
-                                if(mission_selector == 7){
-                                    player01.mission_selector += 5;
-                                }
-                                else if(mission_selector == 9){
-                                    player01.mission_selector += 1;
-                                }
-
-                                game(player01, CheatMode);
-                                //grotta_di_cristallo();
-                            }
-                            else{
-                                clear();
-                                break;
-                            }
-                            break;
+                            else{clear(); break;}
                         case 3:
-                            if(mission_selector == 6){
+                            if(cnt==3){
                                 clear();
                                 //INIZIO MISSIONE
                                 int Gdungeon_rooms[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
                                 int* RoomPointer;
-                                GrottaDiCristalloIsCompleted = grotta_di_cristallo(&player01, Gdungeon_rooms, RoomPointer);
+                                player01.grotta = grotta_di_cristallo(&player01, Gdungeon_rooms, RoomPointer);
                                 // logica di rilevazione Missione Superata con Successo o Game Over ( player.life <= 0 )
-                                if(!GrottaDiCristalloIsCompleted){
+                                if(!player01.grotta){
                                     // La funzione grotta_di_cristallo() torna false, il player e' incorso in un Game Over
                                     // Richiamo direttamente la funzione menu(), ricomincio da capo e torno al Menu Principale
                                     menu(CheatMode);
                                 }
-
-                                player01.grotta = true;
                                 player01.CompletedMissions += 1;
-
-                                player01.mission_selector += 5;
-
                                 game(player01, CheatMode);
-                                //grotta_di_cristallo();
                             }
-                            else{
-                                clear();
-                                break;
-                            }
-                            break;
-
+                            else{clear(); break;}
                         default:
                             clear();
                             break;
@@ -396,7 +344,7 @@ void game(player player01, int CheatMode){
                 game(player01, CheatMode);
             case 4:
             // SALVATAGGIO
-                snprintf(SaveStats, BUF, ", %02d P . VITA , %03d MONETE , %02d OGGETTI , %01d MISSIONI COMPLETATE %d%d%d%d%d%d%d%d%d \n", player01.life, player01.money, player01.items, player01.CompletedMissions, player01.palude, player01.magione, player01.grotta, player01.CastleKey, player01.armor, player01.sword, player01.heroSword, player01.mission_selector, player01.potions);
+                snprintf(SaveStats, BUF, ", %02d P . VITA , %03d MONETE , %02d OGGETTI , %01d MISSIONI COMPLETATE %d%d%d%d%d%d%d%d \n", player01.life, player01.money, player01.items, player01.CompletedMissions, player01.palude, player01.magione, player01.grotta, player01.CastleKey, player01.armor, player01.sword, player01.heroSword, player01.potions);
                 addSave(SaveStats);
                 Text(53);
                 break;

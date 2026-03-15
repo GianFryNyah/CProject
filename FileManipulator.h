@@ -167,7 +167,7 @@ player loadSave(int Num){
             // Tornera' un tipo Player con i valori desiderati
 
             int life; int money; int items; int CompletedMissions; bool palude; bool magione; bool grotta; bool armor; bool sword; bool heroSword; int potions;
-            bool CastleKey; int mission_selector; int mission_selector_range = 7;
+            bool CastleKey;
 
             // coordinate vari attributi per gestione salvataggi, in ordine di comparsa nella struct:
             // 25-26 ; 39-41 ; 52-53 ; 65 ; 87 ; 88 ; 89 ; 90 ; 91 ; 92 ; 93 ; 94 ; 95-96 ( se potions > 9 )
@@ -239,19 +239,15 @@ player loadSave(int Num){
             if(num == 1){ heroSword = true;}
             else{heroSword = false;}
 
-            // MISSION_SELECTOR EXTRAPOLATION
-            oneDigitsHolder[0] = data[94];
-            mission_selector = strtol(oneDigitsHolder, &endptr, 10);
-
             // POTIONS EXTRAPOLATION
             y = 0;
-            for(int i = 95; i <= 96; i++){
+            for(int i = 94; i <= 95; i++){
                 twoDigitsHolder[y] = data[i];
                 y++;
             }
             potions = strtol(twoDigitsHolder, &endptr, 10);
 
-            player playerToLoad = {life, money, items, CompletedMissions, mission_selector, mission_selector_range, potions, palude, magione, grotta, armor, sword, heroSword, CastleKey};
+            player playerToLoad = {life, money, items, CompletedMissions, potions, palude, magione, grotta, armor, sword, heroSword, CastleKey};
             fclose(ppFile);
             return playerToLoad;
         }
@@ -261,7 +257,7 @@ player loadSave(int Num){
     // a questo punto del codice, non si e' riusciti a trovare il salvataggio selezionato
     // mostra l'errore al giocatore ed inizializza il tipo player da tornare con valori di default
     printf("\nErrore nel caricamento! Verra' avviata una Nuova Partita\n");
-    player failed_load = {20, 0, 0, 0, 6, 7, 0, false, false, false, false, false, false, false};
+    player failed_load = {20, 0, 0, 0, 0, false, false, false, false, false, false, false};
     return failed_load;
 }
 
@@ -308,7 +304,7 @@ void Cheats(int Num, int life, int money, bool missione_finale){
                 toModify.CompletedMissions = 3;
             }
 
-            snprintf(SaveStats, BUF, ", %02d P . VITA , %03d MONETE , %02d OGGETTI , %01d MISSIONI COMPLETATE %d%d%d%d%d%d%d%d%d \n", toModify.life, toModify.money, toModify.items, toModify.CompletedMissions, toModify.palude, toModify.magione, toModify.grotta, toModify.CastleKey, toModify.armor, toModify.sword, toModify.heroSword, toModify.mission_selector, toModify.potions);
+            snprintf(SaveStats, BUF, ", %02d P . VITA , %03d MONETE , %02d OGGETTI , %01d MISSIONI COMPLETATE %d%d%d%d%d%d%d%d \n", toModify.life, toModify.money, toModify.items, toModify.CompletedMissions, toModify.palude, toModify.magione, toModify.grotta, toModify.CastleKey, toModify.armor, toModify.sword, toModify.heroSword, toModify.potions);
             fprintf(cpFile, "%s%s", Time, SaveStats);
         }
     }

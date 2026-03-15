@@ -11,8 +11,6 @@ typedef struct{
     int money;
     int items;
     int CompletedMissions;
-    int mission_selector;
-    int mission_selector_range;
     int potions;
     bool palude;
     bool magione;
